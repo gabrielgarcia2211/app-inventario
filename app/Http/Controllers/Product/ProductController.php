@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Product;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Controllers\ResponseController as Response;
 use App\Repositories\Product\ProductRepositoryInterface;
 
@@ -28,7 +30,7 @@ class ProductController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -57,7 +59,7 @@ class ProductController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
         $request->validate([
             'name' => 'required|string|max:255',
