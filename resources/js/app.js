@@ -4,36 +4,57 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-import './bootstrap';
-import { createApp } from 'vue';
+import "./bootstrap";
+import { createApp } from "vue";
+import PrimeVue from "primevue/config";
+import esLocale from "./translations/primevue-es.json";
+import Aura from "@primevue/themes/aura";
+import "primeicons/primeicons.css";
 
-/**
- * Next, we will create a fresh Vue application instance. You may then begin
- * registering components with the application instance so they are ready
- * to use in your application's views. An example is included for you.
- */
+// Importacion de funciones compartidas
+import shared from "./utils/shared";
+import axios from "axios";
+
+// componentes generales
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import Button from "primevue/button";
+import InputText from "primevue/inputtext";
+import Card from "primevue/card";
 
 const app = createApp({});
 
-import ExampleComponent from './components/ExampleComponent.vue';
-app.component('example-component', ExampleComponent);
+app.use(PrimeVue, {
+    theme: {
+        preset: Aura,
+    },
+    zIndex: {
+        modal: 1000, //dialog, sidebar
+        overlay: 9999, //dropdown, overlaypanel
+        menu: 1000, //overlay menus
+        tooltip: 1100, //tooltip
+    },
+});
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+app.mixin(shared.AlertsComponent);
+app.mixin(shared.ReadHttpStatusErrors);
+app.mixin(shared.HelperFunctions);
+app.mixin(shared.RelationsTables);
 
-// Object.entries(import.meta.glob('./**/*.vue', { eager: true })).forEach(([path, definition]) => {
-//     app.component(path.split('/').pop().replace(/\.\w+$/, ''), definition.default);
-// });
+// Anexo de componentes de vuejs
+app.component("DataTable", DataTable);
+app.component("Column", Column);
+app.component("Button", Button);
+app.component("InputText", InputText);
+app.component("Card", Card);
 
-/**
- * Finally, we will attach the application instance to a HTML element with
- * an "id" attribute of "app". This element is included with the "auth"
- * scaffolding. Otherwise, you will need to add an element yourself.
- */
+import ExampleComponent from "./components/ExampleComponent.vue";
+app.component("example-component", ExampleComponent);
 
-app.mount('#app');
+// Configura Axios globalmente
+app.config.globalProperties.$axios = axios;
+
+// Localidad de PrimeVue
+app.config.globalProperties.$primevue.config.locale = esLocale;
+
+app.mount("#app");

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Product;
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Controllers\ResponseController as Response;
+use App\Models\Product\Product;
 use App\Repositories\Product\ProductRepositoryInterface;
 
 class ProductController extends Controller
@@ -18,11 +20,18 @@ class ProductController extends Controller
         $this->productRepository = $productRepository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $products = $this->productRepository->all();
-            return Response::sendResponse($products, 'Registros obtenidos con exito.');
+            $query = $this->setQuery();
+            return renderDataTable(
+                $query,
+                $request,
+                [],
+                [
+                    'products.*'
+                ]
+            );
         } catch (\Exception $ex) {
             Log::info($ex->getLine());
             Log::info($ex->getMessage());
@@ -86,5 +95,11 @@ class ProductController extends Controller
             Log::info($ex->getMessage());
             return Response::sendError('Ocurrio un error inesperado al intentar procesar la solicitud', 500);
         }
+    }
+
+    private function setQuery()
+    {
+        return Product::query()
+            ->distinct();
     }
 }
