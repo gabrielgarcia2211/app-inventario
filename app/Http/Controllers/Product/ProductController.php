@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Enums\Size;
 use Illuminate\Http\Request;
+use App\Models\Product\Product;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Controllers\ResponseController as Response;
-use App\Models\Product\Product;
 use App\Repositories\Product\ProductRepositoryInterface;
 
 class ProductController extends Controller
@@ -101,5 +102,12 @@ class ProductController extends Controller
     {
         return Product::query()
             ->distinct();
+    }
+
+    public function getProductSize()
+    {
+        $sizes = Size::getValues();
+        $sizesWithQuantity = array_map(fn ($size) => ['size' => $size, 'quantity' => 0], $sizes);
+        return response()->json($sizesWithQuantity);
     }
 }
