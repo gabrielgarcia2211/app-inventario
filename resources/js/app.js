@@ -15,6 +15,7 @@ import "primeicons/primeicons.css";
 import shared from "./utils/shared";
 import Swal from "sweetalert2";
 import axios from "axios";
+import $ from 'jquery';
 
 // componentes generales
 import DataTable from "primevue/datatable";
@@ -66,5 +67,8 @@ app.config.globalProperties.$primevue.config.locale = esLocale;
 
 // Configura SweetAlert2 globalmente
 app.config.globalProperties.$swal = Swal;
+
+window.$ = $;
+window.jQuery = $;
 
 app.mount("#app");

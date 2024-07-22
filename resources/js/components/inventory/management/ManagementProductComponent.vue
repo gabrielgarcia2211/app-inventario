@@ -64,9 +64,17 @@
         <div class="product-form">
             <div class="product-form-column">
                 <Select
+                    :options="categorys"
+                    v-model="product.category"
                     placeholder="Selecciona categoria"
+                    :class="{ 'p-invalid': errors.category }"
+                    optionLabel="name"
+                    optionValue="name"
                     style="width: 100%"
                 />
+                <small v-if="errors.category" class="p-error">{{
+                    errors.category
+                }}</small>
             </div>
         </div>
         <div class="product-form">
@@ -151,9 +159,11 @@ export default {
                 description: "",
                 price: 0,
                 quantity: 0,
-                isTotal: true,
+                category: "",
+                is_total: true,
             },
             sizes: null,
+            categorys: [],
             errors: {},
         };
     },
@@ -163,13 +173,19 @@ export default {
     },
     watch: {
         isAllSize(newValue) {
+            this.product.is_total = !newValue;
             if (newValue) {
                 this.getProductSize();
             }
-            this.product.isTotal = newValue;
         },
     },
+    created() {
+        this.initServices();
+    },
     methods: {
+        async initServices() {
+            this.categorys = await this.$getEnumProductCategory();
+        },
         async validateForm() {
             let initialRules = {
                 name: Yup.string().required("El nombre es obligatorio"),
@@ -177,6 +193,7 @@ export default {
                     "La descripcion es obligatoria"
                 ),
                 price: Yup.string().required("El precio es obligatorio"),
+                category: Yup.string().required("La categoria es obligatoria"),
             };
             const schema = Yup.object().shape({
                 ...initialRules,
@@ -194,20 +211,22 @@ export default {
                 return false;
             }
         },
-        getProductSize() {
-            this.$axios
-                .get("/products/list/size")
-                .then((response) => {
-                    this.sizes = response.data;
-                })
-                .catch((error) => {
-                    this.$readStatusHttp(error);
-                });
+        async getProductSize() {
+            this.sizes = await this.$getEnumProductSize();
         },
         async saveProduct() {
             const isValid = await this.validateForm();
             if (isValid) {
-                // Handle successful product save
+                this.product.sizes = null;
+                if (!this.product.is_total) this.product.sizes = this.sizes;
+                this.$axios
+                    .post("/products/store", this.product)
+                    .then((response) => {
+                        this.$alertSuccess("Producto Añadido");
+                    })
+                    .catch((error) => {
+                        this.$readStatusHttp(error);
+                    });
             }
         },
         clearError(field) {
