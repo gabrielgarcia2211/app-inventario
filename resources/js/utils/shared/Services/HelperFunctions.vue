@@ -29,6 +29,18 @@ export default {
                     });
             });
         },
+        $formatPrice(value) {
+            if (isNaN(value)) return value;
+            return new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+            }).format(value);
+        },
+        $formatNumber(value) {
+            if (isNaN(value)) return value;
+            const number = Math.floor(parseFloat(value));
+            return number.toLocaleString("es-ES").replace(",", ".");
+        },
     },
 };
 </script>

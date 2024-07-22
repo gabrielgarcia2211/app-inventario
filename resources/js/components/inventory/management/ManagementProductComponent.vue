@@ -125,6 +125,31 @@
                 />
             </div>
         </div>
+        <div class="product-form">
+            <div class="product-form-column">
+                <FileUpload
+                    id="attachPhoto"
+                    ref="fileUpload"
+                    accept="image/*"
+                    :multiple="false"
+                    :fileLimit="1"
+                    :class="{
+                        'p-invalid': errors.photo,
+                    }"
+                    @change="onFileUpload"
+                >
+                    <template #empty>
+                        <p>Adjuntar foto.</p>
+                    </template>
+                </FileUpload>
+                <small
+                    v-if="errors.photo"
+                    style="display: block"
+                    class="p-error"
+                    >{{ errors.photo }}</small
+                >
+            </div>
+        </div>
         <template #footer>
             <div class="text-center">
                 <Button
@@ -147,6 +172,7 @@
 import * as Yup from "yup";
 import ToggleButton from "primevue/togglebutton";
 import Select from "primevue/select";
+import FileUpload from "primevue/fileupload";
 
 export default {
     props: ["dialogVisible"],
@@ -160,7 +186,8 @@ export default {
                 price: 0,
                 quantity: 0,
                 category: "",
-                is_total: true,
+                is_total: "ALL",
+                photo: null,
             },
             sizes: null,
             categorys: [],
@@ -170,10 +197,11 @@ export default {
     components: {
         ToggleButton,
         Select,
+        FileUpload,
     },
     watch: {
         isAllSize(newValue) {
-            this.product.is_total = !newValue;
+            this.product.is_total = !newValue ? "ALL" : "SIZE";
             if (newValue) {
                 this.getProductSize();
             }
@@ -194,6 +222,7 @@ export default {
                 ),
                 price: Yup.string().required("El precio es obligatorio"),
                 category: Yup.string().required("La categoria es obligatoria"),
+                photo: Yup.string().required("La foto es obligatoria"),
             };
             const schema = Yup.object().shape({
                 ...initialRules,
@@ -218,15 +247,32 @@ export default {
             const isValid = await this.validateForm();
             if (isValid) {
                 this.product.sizes = null;
-                if (!this.product.is_total) this.product.sizes = this.sizes;
+                if (this.product.is_total == "SIZE")
+                    this.product.sizes = this.sizes;
                 this.$axios
-                    .post("/products/store", this.product)
+                    .post("/products/store", this.product, {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    })
                     .then((response) => {
                         this.$alertSuccess("Producto Añadido");
+                        this.$emit("save", true);
                     })
                     .catch((error) => {
                         this.$readStatusHttp(error);
                     });
+            }
+        },
+        onFileUpload() {
+            const file_upload = this.$refs.fileUpload;
+            if (file_upload) {
+                const file = file_upload.files[0];
+                if (file) {
+                    if (file.type && file.type.startsWith("image/")) {
+                        this.product.photo = file;
+                    }
+                }
             }
         },
         clearError(field) {
@@ -284,5 +330,10 @@ export default {
 
 .size-quantity-row .p-float-label {
     flex: 1;
+}
+
+#attachPhoto [data-pc-name="pcuploadbutton"],
+#attachPhoto [data-pc-name="pccancelbutton"] {
+    display: none;
 }
 </style>

@@ -3,6 +3,7 @@
 namespace App\Models\Product;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model
@@ -15,6 +16,13 @@ class Product extends Model
         'price',
         'category',
         'is_total',
-        'quantity',
+        'photo',
     ];
+
+    public function getPhotoAttribute($value)
+    {
+        if ($value) {
+            return Storage::disk('disk_product')->url($value);
+        }
+    }
 }

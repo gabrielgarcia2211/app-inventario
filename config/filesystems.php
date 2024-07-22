@@ -39,7 +39,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
@@ -54,6 +54,13 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
+        ],
+
+        'disk_product' => [
+            'driver' => 'local',
+            'root' => storage_path('app/storage_products'),
+            'url' => env('APP_URL') . '/storage_products',
+            'visibility' => 'public',
         ],
 
     ],
@@ -71,6 +78,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        public_path('storage_products') => storage_path('app/storage_products'),
     ],
 
 ];

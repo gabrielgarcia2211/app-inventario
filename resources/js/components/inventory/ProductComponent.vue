@@ -76,10 +76,10 @@
                 style="min-width: 200px"
             >
                 <template #body="{ data }">
-                    {{ data.price }}
+                    {{ $formatPrice(data.price) }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <InputText
+                    <InputNumber
                         v-model="filterModel.value"
                         type="text"
                         class="p-column-filter"
@@ -108,36 +108,35 @@
             </Column>
             <Column
                 field="size"
-                header="Talla"
+                header="Talla / Cantidad"
                 sortable
                 :showClearButton="false"
                 style="min-width: 200px"
             >
                 <template #body="{ data }">
-                    {{ data.size }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText
-                        v-model="filterModel.value"
-                        type="text"
-                        class="p-column-filter"
-                        placeholder="Buscar por talla"
-                    />
+                    <div class="size-tags">
+                        <Tag
+                            v-for="(sizeInfo, index) in parseSizes(data.sizes)"
+                            :key="index"
+                            :value="`${sizeInfo.size}: ${$formatNumber(
+                                sizeInfo.value
+                            )}`"
+                            class="size-tag"
+                        />
+                    </div>
                 </template>
             </Column>
             <Column header="Foto">
                 <template #body="slotProps">
-                    <img
-                        :src="'https://www.mundodeportivo.com/alfabeta/hero/2023/09/goku-colores.jpg?width=1200'"
-                        :alt="'imagen'"
-                        class="w-24 rounded cursor-pointer"
-                        width="200px"
-                        @click="
-                            viewImage(
-                                'https://www.mundodeportivo.com/alfabeta/hero/2023/09/goku-colores.jpg?width=1200'
-                            )
-                        "
-                    />
+                    <div style="text-align: center">
+                        <img
+                            :src="slotProps.data.photo"
+                            :alt="'imagen'"
+                            class="w-24 rounded cursor-pointer"
+                            width="200px"
+                            @click="viewImage(slotProps.data.photo)"
+                        />
+                    </div>
                 </template>
             </Column>
             <Column
@@ -179,12 +178,14 @@
         v-if="dialogVisible"
         :dialogVisible="dialogVisible"
         @hidden="hiddenManagementProduct"
+        @save="fetchProducts"
     />
 </template>
 
 <script>
 import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
 import ManagementProductComponent from "./management/ManagementProductComponent.vue";
+import Tag from "primevue/tag";
 
 export default {
     data() {
@@ -207,6 +208,7 @@ export default {
         FilterMatchMode,
         FilterOperator,
         ManagementProductComponent,
+        Tag,
     },
     created() {
         this.initFilters();
@@ -236,12 +238,6 @@ export default {
                     ],
                 },
                 category: {
-                    clear: false,
-                    constraints: [
-                        { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-                    ],
-                },
-                size: {
                     clear: false,
                     constraints: [
                         { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -313,9 +309,16 @@ export default {
             this.selectedImage = imageUrl;
             this.imgVisible = true;
         },
-        hiddenManagementProduct(status){
+        hiddenManagementProduct(status) {
             this.dialogVisible = status;
-        }
+        },
+        parseSizes(sizeString) {
+            if (!sizeString) return [];
+            return sizeString.split(";").map((sizePair) => {
+                const [size, value] = sizePair.split(":");
+                return { size, value };
+            });
+        },
     },
 };
 </script>
@@ -324,5 +327,20 @@ export default {
 .container-product {
     margin-right: 40px;
     margin-left: 40px;
+}
+
+.p-tag {
+    color: white !important;
+    background-color: #038692 !important;
+}
+
+.size-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.size-tag {
+    padding: 2px;
+    margin: 3px;
 }
 </style>

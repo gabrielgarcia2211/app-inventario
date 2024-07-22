@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('description');
             $table->double('price');
             $table->string('category');
-            $table->boolean('is_total')->default(0);
-            $table->integer('quantity')->nullable();
+            $table->string('is_total');
+            $table->string('photo')->nullable();
             $table->timestamps();
         });
     }
