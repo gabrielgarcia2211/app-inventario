@@ -126,7 +126,7 @@
             </div>
         </div>
         <div class="product-form">
-            <div class="product-form-column">
+            <div v-if="!flagPhoto" class="product-form-column">
                 <FileUpload
                     id="attachPhoto"
                     ref="fileUpload"
@@ -149,14 +149,43 @@
                     >{{ errors.photo }}</small
                 >
             </div>
+            <div v-else class="product-form-column">
+                <div class="flex justify-center items-center h-full">
+                    <div
+                        class="card p-card"
+                        style="width: 320px; padding: 10px; text-align: center"
+                    >
+                        <Image
+                            :src="product.photo"
+                            alt="Image"
+                            width="300"
+                            preview
+                        />
+                        <Button
+                            label="Eliminar"
+                            icon="pi pi-trash"
+                            class="p-button-danger mt-2"
+                            @click="removePhoto"
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
         <template #footer>
             <div class="text-center">
                 <Button
+                    v-if="!selectedProduct"
                     label="Guardar"
                     severity="success"
                     style="margin-right: 10px"
                     @click="saveProduct"
+                />
+                <Button
+                    v-else
+                    label="Actualizar"
+                    severity="success"
+                    style="margin-right: 10px"
+                    @click="updateProduct"
                 />
                 <Button
                     label="Cancelar"
@@ -175,10 +204,10 @@ import Select from "primevue/select";
 import FileUpload from "primevue/fileupload";
 
 export default {
-    props: ["dialogVisible"],
+    props: ["dialogVisible", "selectedProduct"],
     data() {
         return {
-            isAllSize: false,
+            isAllSize: this.selectedProduct?.is_total == "SIZE" ? true : false,
             visible: this.dialogVisible,
             product: {
                 name: "",
@@ -192,6 +221,7 @@ export default {
             sizes: null,
             categorys: [],
             errors: {},
+            flagPhoto: false,
         };
     },
     components: {
@@ -206,6 +236,22 @@ export default {
                 this.getProductSize();
             }
         },
+    },
+    mounted() {
+        if (this.selectedProduct) {
+            const currentSize = this.$parseSizes(this.selectedProduct.sizes);
+            this.product.name = this.selectedProduct.name;
+            this.product.description = this.selectedProduct.description;
+            this.product.price = this.selectedProduct.price;
+            this.product.category = this.selectedProduct.category;
+            this.product.is_total = this.selectedProduct.is_total;
+            this.product.photo = this.flagPhoto = this.selectedProduct.photo;
+            if (currentSize && currentSize.length > 1) {
+                this.sizes = currentSize;
+            } else if (currentSize) {
+                this.product.quantity = currentSize[0]["quantity"];
+            }
+        }
     },
     created() {
         this.initServices();
@@ -264,6 +310,31 @@ export default {
                     });
             }
         },
+        async updateProduct() {
+            const isValid = await this.validateForm();
+            if (isValid) {
+                this.product.sizes = null;
+                if (this.product.is_total == "SIZE")
+                    this.product.sizes = this.sizes;
+                this.$axios
+                    .post(
+                        "/products/update/" + this.selectedProduct.id,
+                        this.product,
+                        {
+                            headers: {
+                                "Content-Type": "multipart/form-data",
+                            },
+                        }
+                    )
+                    .then((response) => {
+                        this.$alertSuccess("Producto Actualizado");
+                        this.$emit("save", true);
+                    })
+                    .catch((error) => {
+                        this.$readStatusHttp(error);
+                    });
+            }
+        },
         onFileUpload() {
             const file_upload = this.$refs.fileUpload;
             if (file_upload) {
@@ -274,6 +345,9 @@ export default {
                     }
                 }
             }
+        },
+        removePhoto() {
+            this.flagPhoto = false;
         },
         clearError(field) {
             this.errors[field] = "";
@@ -335,5 +409,11 @@ export default {
 #attachPhoto [data-pc-name="pcuploadbutton"],
 #attachPhoto [data-pc-name="pccancelbutton"] {
     display: none;
+}
+
+.p-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 </style>

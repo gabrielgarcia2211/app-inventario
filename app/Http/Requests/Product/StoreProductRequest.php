@@ -28,6 +28,7 @@ class StoreProductRequest extends FormRequest
             'category' => 'required|string|max:255',
             'is_total' => 'required',
             'photo' => 'required',
+            'quantity' => 'required',
         ];
     }
 
@@ -47,6 +48,7 @@ class StoreProductRequest extends FormRequest
             'category.max' => 'El campo categoría no puede tener más de 255 caracteres.',
             'is_total.required' => 'El campo is_total es obligatorio.',
             'photo.required' => 'El campo foto es obligatorio.',
+            'quantity.required' => 'La cantidad es obligatoria.',
         ];
     }
 }

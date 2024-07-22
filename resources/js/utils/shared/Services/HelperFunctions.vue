@@ -41,6 +41,13 @@ export default {
             const number = Math.floor(parseFloat(value));
             return number.toLocaleString("es-ES").replace(",", ".");
         },
+        $parseSizes(sizeString) {
+            if (!sizeString) return [];
+            return sizeString.split(";").map((sizePair) => {
+                const [size, quantity] = sizePair.split(":");
+                return { size, quantity: parseInt(quantity) };
+            });
+        },
     },
 };
 </script>

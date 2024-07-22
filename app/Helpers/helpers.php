@@ -70,3 +70,14 @@ function getQueryValue($operator, $value)
             return $value;
     }
 }
+
+function cleanStorageUrl($url) {
+    $url = trim($url);
+    $basePath = '/storage_products/';
+    $position = strpos($url, $basePath);
+    if ($position === false) {
+        return $url;
+    }
+    $cleanedUrl = substr($url, $position + strlen($basePath));
+    return $cleanedUrl;
+}

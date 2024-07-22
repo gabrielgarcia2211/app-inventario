@@ -116,10 +116,10 @@
                 <template #body="{ data }">
                     <div class="size-tags">
                         <Tag
-                            v-for="(sizeInfo, index) in parseSizes(data.sizes)"
+                            v-for="(sizeInfo, index) in $parseSizes(data.sizes)"
                             :key="index"
                             :value="`${sizeInfo.size}: ${$formatNumber(
-                                sizeInfo.value
+                                sizeInfo.quantity
                             )}`"
                             class="size-tag"
                         />
@@ -127,14 +127,14 @@
                 </template>
             </Column>
             <Column header="Foto">
-                <template #body="slotProps">
+                <template #body="{ data }">
                     <div style="text-align: center">
-                        <img
-                            :src="slotProps.data.photo"
+                        <Image
+                            :src="data.photo"
                             :alt="'imagen'"
                             class="w-24 rounded cursor-pointer"
                             width="200px"
-                            @click="viewImage(slotProps.data.photo)"
+                            preview
                         />
                     </div>
                 </template>
@@ -160,23 +160,11 @@
             </Column>
         </DataTable>
     </div>
-    <!-- visualizacion de imagen -->
-    <Dialog
-        v-model:visible="imgVisible"
-        style="width: 50vw"
-        :modal="true"
-        @hide="imgVisible = false"
-    >
-        <img
-            :src="selectedImage"
-            class="w-full"
-            style="max-width: 100%; max-height: 70vh; object-fit: contain"
-        />
-    </Dialog>
     <!-- gestion de producto -->
     <ManagementProductComponent
         v-if="dialogVisible"
         :dialogVisible="dialogVisible"
+        :selectedProduct="selectedProduct"
         @hidden="hiddenManagementProduct"
         @save="fetchProducts"
     />
@@ -199,9 +187,8 @@ export default {
             filters: null,
             filtroInfo: [],
             loading: true,
-            imgVisible: false,
-            selectedImage: null,
             dialogVisible: false,
+            selectedProduct: null,
         };
     },
     components: {
@@ -295,29 +282,19 @@ export default {
                 });
         },
         addProduct() {
+            this.selectedProduct = null;
             this.dialogVisible = true;
         },
         editProduct(product) {
-            // Lógica para editar un producto
-            console.log("Editar producto:", product);
+            this.selectedProduct = product;
+            this.dialogVisible = true;
         },
         deleteProduct(product) {
             // Lógica para eliminar un producto
             console.log("Eliminar producto:", product);
         },
-        viewImage(imageUrl) {
-            this.selectedImage = imageUrl;
-            this.imgVisible = true;
-        },
         hiddenManagementProduct(status) {
             this.dialogVisible = status;
-        },
-        parseSizes(sizeString) {
-            if (!sizeString) return [];
-            return sizeString.split(";").map((sizePair) => {
-                const [size, value] = sizePair.split(":");
-                return { size, value };
-            });
         },
     },
 };

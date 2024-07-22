@@ -36,6 +36,7 @@ class ProductController extends Controller
                 $request,
                 [],
                 [
+                    'products.id',
                     'products.name',
                     'products.description',
                     'products.price',
@@ -105,8 +106,39 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, $id)
     {
         try {
-            $product = $this->productRepository->update($id, $request->all());
-            return Response::sendResponse($product, 'Registro creado con exito.');
+            $data = $request->all();
+            if ($data['is_total'] == 'SIZE' && isset($data['sizes']) && is_array($data['sizes'])) {
+                $sizes = $data['sizes'];
+            } else {
+                $sizes = [
+                    [
+                        'size' => 'TOTAL',
+                        'quantity' => $data['quantity'],
+                    ]
+                ];
+            }
+            $pattern = '/\bhttps?:\/\/\S+\b/';
+            $path = $data['photo'];
+            unset($data['photo']);
+            if (!preg_match($pattern, $path)) {
+                $currentProduct = Product::find($id);
+                if ($this->fileService->deleteFile(cleanStorageUrl($currentProduct->photo))) {
+                    $currentProduct->photo = $this->fileService->saveFile($path, 1, 'photo');
+                    $currentProduct->save();
+                }
+            }
+            $product = $this->productRepository->update($id, $data);
+            if (!empty($sizes)) {
+                ProductSize::where('product_id', $product->id)->delete();
+                foreach ($sizes as $size) {
+                    ProductSize::create([
+                        'product_id' => $product->id,
+                        'size' => $size['size'],
+                        'quantity' => $size['quantity'],
+                    ]);
+                }
+            }
+            return Response::sendResponse($product, 'Registro actualizado con exito.');
         } catch (\Exception $ex) {
             Log::info($ex->getLine());
             Log::info($ex->getMessage());
@@ -131,6 +163,7 @@ class ProductController extends Controller
         return Product::query()
             ->leftJoin('product_sizes', 'product_sizes.product_id', '=', 'products.id')
             ->groupBy(
+                'products.id',
                 'products.name',
                 'products.description',
                 'products.price',
