@@ -1,6 +1,8 @@
 <?php
 
-function renderDataTable($query, $request, $with = [], $select = false)
+use Illuminate\Support\Facades\Log;
+
+function renderDataTable($query, $request, $with = [], $select = false, $appends = [])
 {
     # Ordenamiento
     if ($request->has('sort') && !empty($request->input('sort')) && !empty($request->input('sort')[0])) {
@@ -28,9 +30,27 @@ function renderDataTable($query, $request, $with = [], $select = false)
         }
     }
 
+    # Filtros select
+    if ($request->has('select') && !empty($request->input('select'))) {
+        $filters = $request->input('select');
+        foreach ($filters as $key => $value) {
+            $query->where($key, $value);
+        }
+    }
+
     //Log::debug($query->toSql());
     $perPage = $request->input('perPage');
-    return $query->with($with)->select($select)->paginate($perPage);
+    $result = $query->with($with)->select($select)->paginate($perPage);
+
+
+    # Campos virtuales
+    if (!empty($appends)) {
+        $result->getCollection()->transform(function ($model) use ($appends) {
+            return $model->append($appends);
+        });
+    }
+
+    return $result;
 }
 
 function getSqlOperator($operator)
@@ -71,7 +91,8 @@ function getQueryValue($operator, $value)
     }
 }
 
-function cleanStorageUrl($url) {
+function cleanStorageUrl($url)
+{
     $url = trim($url);
     $basePath = '/storage_products/';
     $position = strpos($url, $basePath);

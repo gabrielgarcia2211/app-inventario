@@ -200,7 +200,6 @@
 <script>
 import * as Yup from "yup";
 import ToggleButton from "primevue/togglebutton";
-import Select from "primevue/select";
 import FileUpload from "primevue/fileupload";
 
 export default {
@@ -226,7 +225,6 @@ export default {
     },
     components: {
         ToggleButton,
-        Select,
         FileUpload,
     },
     watch: {

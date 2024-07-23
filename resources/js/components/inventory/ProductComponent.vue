@@ -20,13 +20,23 @@
             showGridlines
         >
             <template #header>
-                <div class="flex justify-end">
+                <div class="header-container-product mb-2">
                     <Button
                         label="Agregar"
                         icon="pi pi-plus"
                         rounded
                         raised
                         @click="addProduct"
+                    />
+                    <Select
+                        v-model="selectedCategory"
+                        :options="listCategorys"
+                        :optionLabel="optionLabelCategory"
+                        placeholder="Selecciona la categoria"
+                        class="w-full md:w-56"
+                        style="width: 20%"
+                        showClear
+                        @change="changeSelectCategory"
                     />
                 </div>
             </template>
@@ -85,6 +95,16 @@
                         class="p-column-filter"
                         placeholder="Buscar por precio"
                     />
+                </template>
+            </Column>
+            <Column
+                v-if="visibleAjustedPrice"
+                field="adjusted_price"
+                header="Precio por categoria"
+                style="min-width: 200px"
+            >
+                <template #body="{ data }">
+                    {{ $formatPrice(data.adjusted_price) }}
                 </template>
             </Column>
             <Column
@@ -154,7 +174,7 @@
                         icon="pi pi-trash"
                         class="p-button-rounded p-button-danger"
                         style="margin: 5px"
-                        @click="deleteProduct(slotProps.data)"
+                        @click="deleteProduct(slotProps.data.id)"
                     />
                 </template>
             </Column>
@@ -189,6 +209,12 @@ export default {
             loading: true,
             dialogVisible: false,
             selectedProduct: null,
+            listCategorys: [],
+            filterSelect: {
+                category: null,
+            },
+            selectedCategory: null,
+            visibleAjustedPrice: false,
         };
     },
     components: {
@@ -199,6 +225,7 @@ export default {
     },
     created() {
         this.initFilters();
+        this.initServices();
     },
     mounted() {
         this.fetchProducts();
@@ -231,6 +258,9 @@ export default {
                     ],
                 },
             };
+        },
+        async initServices() {
+            this.listCategorys = await this.$getEnumProductCategory();
         },
         onPage(event) {
             this.page = event.page + 1;
@@ -269,6 +299,7 @@ export default {
                         perPage: this.perPage,
                         sort: [this.sortField, this.sortOrder],
                         filters: this.filtroInfo,
+                        select: this.filterSelect ?? null,
                     },
                 })
                 .then((response) => {
@@ -289,12 +320,27 @@ export default {
             this.selectedProduct = product;
             this.dialogVisible = true;
         },
-        deleteProduct(product) {
-            // Lógica para eliminar un producto
-            console.log("Eliminar producto:", product);
+        async deleteProduct(productId) {
+            try {
+                await axios.delete(`/products/${productId}`);
+                this.products = this.products.filter(
+                    (product) => product.id !== productId
+                );
+                this.$alertSuccess("Producto eliminado con éxito");
+            } catch (error) {
+                this.$readStatusHttp(error);
+            }
         },
         hiddenManagementProduct(status) {
             this.dialogVisible = status;
+        },
+        changeSelectCategory(event) {
+            this.filterSelect.category = event.value?.name;
+            this.visibleAjustedPrice = event.value != null ? true : false;
+            this.fetchProducts();
+        },
+        optionLabelCategory(option) {
+            return `${option.name} | ${option.percentage * 100}%`;
         },
     },
 };
@@ -306,9 +352,15 @@ export default {
     margin-left: 40px;
 }
 
+.header-container-product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .p-tag {
     color: white !important;
-    background-color: #038692 !important;
+    background-color: #0984bd !important;
 }
 
 .size-tags {

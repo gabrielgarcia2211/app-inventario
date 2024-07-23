@@ -57,16 +57,7 @@ class ProductController extends Controller
     {
         try {
             $data = $request->all();
-            if ($data['is_total'] == 'SIZE' && isset($data['sizes']) && is_array($data['sizes'])) {
-                $sizes = $data['sizes'];
-            } else {
-                $sizes = [
-                    [
-                        'size' => 'TOTAL',
-                        'quantity' => $data['quantity'],
-                    ]
-                ];
-            }
+            $sizes = $this->processSizes($data);
             $path = $data['photo'];
             unset($data['photo']);
             $product = $this->productRepository->create($data);
@@ -107,16 +98,7 @@ class ProductController extends Controller
     {
         try {
             $data = $request->all();
-            if ($data['is_total'] == 'SIZE' && isset($data['sizes']) && is_array($data['sizes'])) {
-                $sizes = $data['sizes'];
-            } else {
-                $sizes = [
-                    [
-                        'size' => 'TOTAL',
-                        'quantity' => $data['quantity'],
-                    ]
-                ];
-            }
+            $sizes = $this->processSizes($data);
             $pattern = '/\bhttps?:\/\/\S+\b/';
             $path = $data['photo'];
             unset($data['photo']);
@@ -149,7 +131,10 @@ class ProductController extends Controller
     public function destroy($id)
     {
         try {
-            $this->productRepository->delete($id);
+            $currentProduct = Product::find($id);
+            if ($this->fileService->deleteFile(cleanStorageUrl($currentProduct->photo))) {
+                $this->productRepository->delete($id);
+            }
             return Response::sendResponse(true, 'Registro eliminado con exito.');
         } catch (\Exception $ex) {
             Log::info($ex->getLine());
@@ -183,8 +168,27 @@ class ProductController extends Controller
 
     public function getEnumProductCategory()
     {
-        $category = categoryProductEnum::getValues();
-        $categoryWithQuantity = array_map(fn ($category) => ['name' => $category], $category);
-        return response()->json($categoryWithQuantity);
+        $categories = categoryProductEnum::cases();
+        $categoryWithNames = array_map(function ($category) {
+            return [
+                'name' => $category->value,
+                'percentage' => $category->getPercentage()
+            ];
+        }, $categories);
+        return response()->json($categoryWithNames);
+    }
+
+
+    private function processSizes(array $data)
+    {
+        if ($data['is_total'] == 'SIZE' && isset($data['sizes']) && is_array($data['sizes'])) {
+            return $data['sizes'];
+        }
+        return [
+            [
+                'size' => 'TOTAL',
+                'quantity' => $data['quantity'],
+            ]
+        ];
     }
 }

@@ -28,6 +28,7 @@ import Dialog from "primevue/dialog";
 import InputNumber from "primevue/inputnumber";
 import FloatLabel from 'primevue/floatlabel';
 import Image from "primevue/image";
+import Select from "primevue/select";
 
 const app = createApp({});
 
@@ -53,6 +54,7 @@ app.component("Dialog", Dialog);
 app.component("InputNumber", InputNumber);
 app.component("FloatLabel", FloatLabel);
 app.component("Image", Image);
+app.component("Select", Select);
 
 import ProductComponent from "./components/inventory/ProductComponent.vue";
 app.component("product-component", ProductComponent);
