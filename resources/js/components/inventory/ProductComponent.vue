@@ -171,6 +171,12 @@
                         @click="editProduct(slotProps.data)"
                     />
                     <Button
+                        icon="pi pi-reply"
+                        class="p-button-rounded p-button-warn"
+                        style="margin: 5px"
+                        @click="outputProduct(slotProps.data.id)"
+                    />
+                    <Button
                         icon="pi pi-trash"
                         class="p-button-rounded p-button-danger"
                         style="margin: 5px"
@@ -186,13 +192,22 @@
         :dialogVisible="dialogVisible"
         :selectedProduct="selectedProduct"
         @hidden="hiddenManagementProduct"
-        @save="fetchProducts"
+        @reload="reloadProducts"
+    />
+    <!-- salid de producto -->
+    <OutputProductComponent
+        v-if="outputVisible"
+        :outputVisible="outputVisible"
+        :productId="productId"
+        @hidden="hiddenOutputProduct"
+        @reload="reloadProducts"
     />
 </template>
 
 <script>
 import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
 import ManagementProductComponent from "./management/ManagementProductComponent.vue";
+import OutputProductComponent from "./management/OutputProductComponent.vue";
 import Tag from "primevue/tag";
 
 export default {
@@ -208,6 +223,7 @@ export default {
             filtroInfo: [],
             loading: true,
             dialogVisible: false,
+            outputVisible: false,
             selectedProduct: null,
             listCategorys: [],
             filterSelect: {
@@ -215,12 +231,14 @@ export default {
             },
             selectedCategory: null,
             visibleAjustedPrice: false,
+            productId: null,
         };
     },
     components: {
         FilterMatchMode,
         FilterOperator,
         ManagementProductComponent,
+        OutputProductComponent,
         Tag,
     },
     created() {
@@ -312,6 +330,11 @@ export default {
                     this.loading = false;
                 });
         },
+        reloadProducts() {
+            this.fetchProducts();
+            this.selectedProduct = this.productId = null;
+            this.dialogVisible = this.outputVisible = false;
+        },
         addProduct() {
             this.selectedProduct = null;
             this.dialogVisible = true;
@@ -321,18 +344,34 @@ export default {
             this.dialogVisible = true;
         },
         async deleteProduct(productId) {
-            try {
-                await axios.delete(`/products/${productId}`);
-                this.products = this.products.filter(
-                    (product) => product.id !== productId
-                );
-                this.$alertSuccess("Producto eliminado con éxito");
-            } catch (error) {
-                this.$readStatusHttp(error);
+            const result = await this.$swal.fire({
+                title: "¿Estás seguro?",
+                text: "Estás a punto de eliminar esta imagen. ¿Estás seguro de que deseas continuar?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar",
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    await axios.delete(`/products/${productId}`);
+                    this.products = this.products.filter(
+                        (product) => product.id !== productId
+                    );
+                    this.$alertSuccess("Producto eliminado con éxito");
+                } catch (error) {
+                    this.$readStatusHttp(error);
+                }
             }
         },
         hiddenManagementProduct(status) {
             this.dialogVisible = status;
+        },
+        hiddenOutputProduct(status) {
+            this.outputVisible = status;
         },
         changeSelectCategory(event) {
             this.filterSelect.category = event.value?.name;
@@ -341,6 +380,10 @@ export default {
         },
         optionLabelCategory(option) {
             return `${option.name} | ${option.percentage * 100}%`;
+        },
+        outputProduct(productId) {
+            this.outputVisible = true;
+            this.productId = productId;
         },
     },
 };

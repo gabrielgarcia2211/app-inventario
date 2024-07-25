@@ -185,7 +185,7 @@ class ProductController extends Controller
         }
         return [
             [
-                'size' => 'TOTAL',
+                'size' => 'ALL',
                 'quantity' => $data['quantity'],
             ]
         ];

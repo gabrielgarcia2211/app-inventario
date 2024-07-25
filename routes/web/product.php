@@ -7,7 +7,6 @@ Route::get('/', function () {
     return view('dashboard');
 })->middleware('auth');
 
-// Definir las rutas del controlador ProductController
 Route::prefix('products')->middleware('auth')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('products.index');
     Route::post('/store', [ProductController::class, 'store'])->name('products.store');

@@ -1,7 +1,6 @@
 <template>
     <Dialog
         v-model:visible="visible"
-        header="Editar Producto"
         modal
         class="dialog-management-product"
         :style="{ width: '60rem' }"
@@ -301,7 +300,7 @@ export default {
                     })
                     .then((response) => {
                         this.$alertSuccess("Producto Añadido");
-                        this.$emit("save", true);
+                        this.$emit("reload", true);
                     })
                     .catch((error) => {
                         this.$readStatusHttp(error);
@@ -326,7 +325,7 @@ export default {
                     )
                     .then((response) => {
                         this.$alertSuccess("Producto Actualizado");
-                        this.$emit("save", true);
+                        this.$emit("reload", true);
                     })
                     .catch((error) => {
                         this.$readStatusHttp(error);
@@ -404,8 +403,7 @@ export default {
     flex: 1;
 }
 
-#attachPhoto [data-pc-name="pcuploadbutton"],
-#attachPhoto [data-pc-name="pccancelbutton"] {
+#attachPhoto [data-pc-name="pcuploadbutton"]{
     display: none;
 }
 

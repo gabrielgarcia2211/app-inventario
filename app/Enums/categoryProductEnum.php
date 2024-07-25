@@ -4,10 +4,9 @@ namespace App\Enums;
 
 enum categoryProductEnum: string
 {
-    case MEN = 'Men';
-    case WOMEN = 'Women';
-    case BOYS = 'Boys';
-    case GIRLS = 'Girls';
+    case P = 'Pueblos';
+    case CA = 'Ciudad A';
+    case CB = 'Ciudad B';
 
     public static function getValues(): array
     {
@@ -17,10 +16,9 @@ enum categoryProductEnum: string
     public function getPercentage(): float
     {
         return match ($this) {
-            self::MEN => 0.10,    // 10% adjustment
-            self::WOMEN => 0.15,  // 15% adjustment
-            self::BOYS => 0.05,   // 5% adjustment
-            self::GIRLS => 0.08,  // 8% adjustment
+            self::P => 0.10,    // 10% adjustment
+            self::CA => 0.0,  // 15% adjustment
+            self::CB => 0.10,   // 5% adjustment
         };
     }
 }

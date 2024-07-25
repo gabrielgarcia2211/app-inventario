@@ -3,6 +3,7 @@
 namespace App\Models\Product;
 
 use App\Enums\categoryProductEnum;
+use App\Models\ProductSize\ProductSize;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,11 @@ class Product extends Model
         'is_total',
         'photo',
     ];
+
+    public function productSizes()
+    {
+        return $this->hasMany(ProductSize::class);
+    }
 
     protected $appends = ['adjusted_price'];
 
