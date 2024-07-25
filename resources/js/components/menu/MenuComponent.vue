@@ -1,29 +1,48 @@
 <template>
-    <Menubar
-        :model="items"
-        class="menubar-product"
-        style="padding: 20px 10px; border-radius: 0px"
-    ></Menubar>
+    <div>
+        <Menubar
+            :model="items"
+            class="menubar-product"
+            style="padding: 20px 10px; border-radius: 0px"
+        >
+            <template #start>
+                <a href="/" class="p-menuitem-link">
+                    <i class="pi pi-home p-menuitem-icon"></i>
+                    <span class="p-menuitem-text">Productos</span>
+                </a>
+            </template>
+            <template #end>
+                <button
+                    @click="logout"
+                    class="p-button p-component p-button-text"
+                >
+                    <i class="pi pi-sign-out p-menuitem-icon"></i>
+                    <span class="p-menuitem-text">Salir</span>
+                </button>
+            </template>
+        </Menubar>
+    </div>
 </template>
 
 <script>
 export default {
     data() {
         return {
-            items: [
-                {
-                    label: "Productos",
-                    icon: "pi pi-home",
-                    to: "/",
-                    class: "icon-product-home",
-                },
-            ],
+            items: [],
         };
     },
-    components: {},
-    created() {},
-    mounted() {},
-    methods: {},
+    methods: {
+        logout() {
+            axios
+                .post("/logout")
+                .then((response) => {
+                    window.location.href = "/login";
+                })
+                .catch((error) => {
+                    console.error("Error during logout:", error);
+                });
+        },
+    },
 };
 </script>
 
@@ -37,17 +56,32 @@ button.p-paginator-page.p-paginator-page-selected {
     color: white;
 }
 
-.icon-product-home .p-menubar-item-label {
-    color: rgb(255, 255, 255);
+.p-menuitem-link {
+    display: flex;
+    align-items: center;
+    color: white;
     font-size: 16px;
+    text-decoration: none;
+    cursor: pointer;
 }
 
-.icon-product-home:hover .p-menubar-item-label {
+.p-menuitem-link:hover {
     color: black;
 }
 
-.icon-product-home .p-menubar-item-link .p-menubar-item-icon {
-    color: rgb(255, 255, 255);
+.p-menuitem-icon {
+    margin-right: 8px;
+}
+
+button.p-button.p-component.p-button-text {
+    color: white;
     font-size: 16px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+button.p-button.p-component.p-button-text:hover {
+    color: black;
 }
 </style>

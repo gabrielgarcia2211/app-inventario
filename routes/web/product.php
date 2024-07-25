@@ -3,8 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Product\ProductController;
 
+Route::get('/', function () {
+    return view('dashboard');
+})->middleware('auth');
+
 // Definir las rutas del controlador ProductController
-Route::prefix('products')->group(function () {
+Route::prefix('products')->middleware('auth')->group(function () {
     Route::get('/', [ProductController::class, 'index'])->name('products.index');
     Route::post('/store', [ProductController::class, 'store'])->name('products.store');
     Route::get('/{id}', [ProductController::class, 'show'])->name('products.show');
