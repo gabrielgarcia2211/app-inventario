@@ -66,7 +66,7 @@ class ProductController extends Controller
                     ProductSize::create([
                         'product_id' => $product->id,
                         'size' => $size['size'],
-                        'quantity' => $size['quantity'],
+                        'quantity' => $size['quantity'] ?? 0,
                     ]);
                 }
             }
@@ -104,10 +104,9 @@ class ProductController extends Controller
             unset($data['photo']);
             if (!preg_match($pattern, $path)) {
                 $currentProduct = Product::find($id);
-                if ($this->fileService->deleteFile(cleanStorageUrl($currentProduct->photo))) {
-                    $currentProduct->photo = $this->fileService->saveFile($path, 1, 'photo');
-                    $currentProduct->save();
-                }
+                $this->fileService->deleteFile(cleanStorageUrl($currentProduct->photo));
+                $currentProduct->photo = $this->fileService->saveFile($path, 1, 'photo');
+                $currentProduct->save();
             }
             $product = $this->productRepository->update($id, $data);
             if (!empty($sizes)) {
@@ -116,7 +115,7 @@ class ProductController extends Controller
                     ProductSize::create([
                         'product_id' => $product->id,
                         'size' => $size['size'],
-                        'quantity' => $size['quantity'],
+                        'quantity' => $size['quantity'] ?? 0,
                     ]);
                 }
             }
