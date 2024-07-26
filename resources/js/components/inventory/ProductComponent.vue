@@ -208,7 +208,6 @@
 import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
 import ManagementProductComponent from "./management/ManagementProductComponent.vue";
 import OutputProductComponent from "./management/OutputProductComponent.vue";
-import Tag from "primevue/tag";
 
 export default {
     data() {
@@ -239,7 +238,6 @@ export default {
         FilterOperator,
         ManagementProductComponent,
         OutputProductComponent,
-        Tag,
     },
     created() {
         this.initFilters();
@@ -310,8 +308,9 @@ export default {
             this.fetchProducts();
         },
         fetchProducts() {
+            this.loading = true;
             this.$axios
-                .get("/products/", {
+                .get("/products/list", {
                     params: {
                         page: this.page,
                         perPage: this.perPage,
@@ -399,20 +398,5 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.p-tag {
-    color: white !important;
-    background-color: #0984bd !important;
-}
-
-.size-tags {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.size-tag {
-    padding: 2px;
-    margin: 3px;
 }
 </style>

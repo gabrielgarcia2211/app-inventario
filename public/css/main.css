@@ -1,0 +1,14 @@
+.p-tag {
+    color: white !important;
+    background-color: #0984bd !important;
+}
+
+.size-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.size-tag {
+    padding: 2px;
+    margin: 3px;
+}

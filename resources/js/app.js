@@ -15,7 +15,7 @@ import "primeicons/primeicons.css";
 import shared from "./utils/shared";
 import Swal from "sweetalert2";
 import axios from "axios";
-import $ from 'jquery';
+import $ from "jquery";
 
 // componentes generales
 import DataTable from "primevue/datatable";
@@ -26,16 +26,17 @@ import Card from "primevue/card";
 import Menubar from "primevue/menubar";
 import Dialog from "primevue/dialog";
 import InputNumber from "primevue/inputnumber";
-import FloatLabel from 'primevue/floatlabel';
+import FloatLabel from "primevue/floatlabel";
 import Image from "primevue/image";
 import Select from "primevue/select";
+import Tag from "primevue/tag";
 
 const app = createApp({});
 
 app.use(PrimeVue, {
     theme: {
         preset: Aura,
-    }
+    },
 });
 
 app.mixin(shared.AlertsComponent);
@@ -55,13 +56,16 @@ app.component("InputNumber", InputNumber);
 app.component("FloatLabel", FloatLabel);
 app.component("Image", Image);
 app.component("Select", Select);
+app.component("Tag", Tag);
 
 import ProductComponent from "./components/inventory/ProductComponent.vue";
 app.component("product-component", ProductComponent);
 
+import ProductOutflowComponent from "./components/outflows/ProductOutflowComponent.vue";
+app.component("product-outflow-component", ProductOutflowComponent);
+
 import MenuComponent from "./components/menu/MenuComponent.vue";
 app.component("menu-component", MenuComponent);
-
 
 // Configura Axios globalmente
 app.config.globalProperties.$axios = axios;

@@ -25,6 +25,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         try {
+            //dd($request->query());
             $query = $this->productService->getProductsQuery();
             return renderDataTable(
                 $query,
@@ -38,7 +39,7 @@ class ProductController extends Controller
                     'products.category',
                     'products.is_total',
                     'products.photo',
-                    DB::raw('GROUP_CONCAT(CONCAT(product_sizes.size, ":", product_sizes.quantity) SEPARATOR ";") as sizes')
+                    DB::raw('GROUP_CONCAT(CONCAT(product_sizes.size, ":", product_sizes.quantity) ORDER BY product_sizes.size ASC SEPARATOR ";") as sizes')
                 ]
             );
         } catch (\Exception $ex) {

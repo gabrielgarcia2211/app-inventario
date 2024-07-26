@@ -17,6 +17,15 @@ class ProductOutflowService
     public function getProductOutflowsQuery()
     {
         return ProductOutflow::query()
+            ->leftJoin('products', 'products.id', '=', 'product_outflows.product_id')
+            ->leftJoin('product_outflow_details', 'product_outflow_details.product_outflow_id', '=', 'product_outflows.id')
+            ->groupBy(
+                'product_outflows.id',
+                'product_outflows.client_name',
+                'products.name',
+                'products.id',
+                'products.created_at',
+            )
             ->distinct();
     }
 }

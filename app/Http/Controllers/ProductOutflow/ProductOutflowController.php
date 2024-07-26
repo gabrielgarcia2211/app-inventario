@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ProductOutflow;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Services\ProductOutflow\ProductOutflowService;
@@ -26,7 +27,11 @@ class ProductOutflowController extends Controller
                 $request,
                 [],
                 [
-                    'product_outflows.*',
+                    'product_outflows.client_name as client',
+                    'products.name as name',
+                    'products.id as product_id',
+                    DB::raw("DATE_FORMAT(products.created_at, '%d-%m-%Y %H:%i:%s') as fecha_salida"),
+                    DB::raw('GROUP_CONCAT(CONCAT(product_outflow_details.size, ":", product_outflow_details.quantity) ORDER BY product_outflow_details.size ASC SEPARATOR ";") as outflows'),
                 ]
             );
         } catch (\Exception $ex) {

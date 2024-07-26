@@ -20,7 +20,7 @@
             <template #end>
                 <button
                     @click="logout"
-                    class="p-button p-component p-button-text"
+                    class="button-logout p-button p-component"
                 >
                     <span class="p-menuitem-text">Salir</span>
                 </button>
@@ -78,7 +78,7 @@ button.p-paginator-page.p-paginator-page-selected {
     margin-right: 8px;
 }
 
-button.p-button.p-component.p-button-text {
+.menu-container > button.p-button.p-component.p-button-text {
     color: white;
     font-size: 16px;
     border: none;
@@ -113,5 +113,11 @@ button.p-button.p-component.p-button-text:hover {
 
 .menu-button .p-menuitem-icon {
     margin-right: 8px;
+}
+
+.button-logout{
+    color: white !important;
+    background-color: #e15b5b !important;
+    border: 0px !important;
 }
 </style>

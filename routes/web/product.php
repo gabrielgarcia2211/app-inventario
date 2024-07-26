@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Product\ProductController;
 
 Route::get('/', function () {
-    return view('dashboard');
+    return view('product.dashboard');
 })->middleware('auth');
 
 Route::prefix('products')->middleware('auth')->group(function () {
-    Route::get('/', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/list', [ProductController::class, 'index'])->name('products.index');
     Route::post('/store', [ProductController::class, 'store'])->name('products.store');
     Route::get('/{id}', [ProductController::class, 'show'])->name('products.show');
     Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
