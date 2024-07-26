@@ -390,8 +390,8 @@ export default {
 
 <style>
 .container-product {
-    margin-right: 40px;
-    margin-left: 40px;
+    margin-right: 20px;
+    margin-left: 20px;
 }
 
 .header-container-product {
