@@ -1,5 +1,5 @@
 <template>
-    <div class="card mt-5 container-product">
+    <div class="card mt-5 mb-5 container-product">
         <DataTable
             v-model:filters="filters"
             :loading="loading"
