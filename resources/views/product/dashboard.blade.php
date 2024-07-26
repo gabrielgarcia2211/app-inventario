@@ -16,8 +16,8 @@
 
 <body>
     <div id="app" class="content">
-      <menu-component></menu-component>
-       {{--  <product-component></product-component> --}}
+        <menu-component></menu-component>
+        <product-component></product-component>
     </div>
 </body>
 

@@ -1,40 +1,79 @@
 <template>
-    <div>
-        <Menubar
-            :model="items"
-            class="menubar-product"
-            style="padding: 20px 10px; border-radius: 0px"
-        >
-            <template #start>
-                <div class="menu-container">
-                    <a href="/" class="p-menuitem-link menu-button">
-                        <i class="pi pi-home p-menuitem-icon"></i>
-                        <span class="p-menuitem-text">Productos</span>
-                    </a>
-                    <a href="/outflows" class="p-menuitem-link menu-button">
-                        <i class="pi pi-sign-out p-menuitem-icon"></i>
-                        <span class="p-menuitem-text">Salida de Productos</span>
-                    </a>
-                </div>
-            </template>
-            <template #end>
-                <button
-                    @click="logout"
-                    class="button-logout p-button p-component"
+    <Menubar
+        :model="items"
+        class="menubar-product"
+        style="padding: 20px 10px; border-radius: 0px"
+    >
+        <template #start>
+            <Button
+                icon="pi pi-bars"
+                @click="visible = true"
+                severity="info"
+                text
+                raised
+                style="margin-left: 10px"
+            />
+        </template>
+        <template #end>
+            <Button
+                icon="pi pi-sign-out"
+                severity="danger"
+                text
+                raised
+                rounded
+                @click="logout"
+            />
+        </template>
+    </Menubar>
+    <Drawer v-model:visible="visible" class="custom-drawer">
+        <template #header>
+            <div class="flex items-center gap-2">
+                <Avatar image="/img/dash.png" shape="circle" />
+                <p
+                    style="
+                        font-family: 'Courier New', Courier, monospace;
+                        font-size: 20px;
+                        font-weight: bold;
+                    "
                 >
-                    <span class="p-menuitem-text">Salir</span>
-                </button>
-            </template>
-        </Menubar>
-    </div>
+                    Menú
+                </p>
+            </div>
+        </template>
+        <hr />
+        <ul class="menu-options">
+            <li>
+                <a href="/" class="p-menuitem-link menu-button">
+                    <i class="pi pi-box p-menuitem-icon"></i>
+                    <span class="p-menuitem-text">Productos</span>
+                </a>
+            </li>
+            <li>
+                <a href="/outflows" class="p-menuitem-link menu-button">
+                    <i class="pi pi-sign-in p-menuitem-icon"></i>
+                    <span class="p-menuitem-text">Salida de Productos</span>
+                </a>
+            </li>
+        </ul>
+    </Drawer>
 </template>
 
 <script>
+import Avatar from "primevue/avatar";
+import Drawer from "primevue/drawer";
+import Menubar from "primevue/menubar";
+
 export default {
     data() {
         return {
+            visible: false,
             items: [],
         };
+    },
+    components: {
+        Avatar,
+        Drawer,
+        Menubar,
     },
     methods: {
         logout() {
@@ -44,7 +83,7 @@ export default {
                     window.location.href = "/login";
                 })
                 .catch((error) => {
-                    console.error("Error during logout:", error);
+                    this.$readStatusHttp(error);
                 });
         },
     },
@@ -52,72 +91,43 @@ export default {
 </script>
 
 <style>
-.menubar-product {
-    background-color: #e15b5b !important;
+.icon-bars {
+    background-color: #0882b7 !important;
+    border: 1px white solid !important;
 }
 
-button.p-paginator-page.p-paginator-page-selected {
-    background-color: #e15b5b !important;
-    color: white;
+.custom-drawer {
+    width: 300px !important;
 }
 
-.p-menuitem-link {
+.custom-drawer .menu-options {
+    list-style-type: none;
+    margin: 0;
+    padding: 0 10px;
+}
+
+.custom-drawer .menu-options li {
     display: flex;
     align-items: center;
-    color: white;
+    padding: 10px 5px;
     font-size: 16px;
-    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.custom-drawer .menu-options li i {
+    margin-right: 10px;
+}
+
+.custom-drawer .menu-options li:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
     cursor: pointer;
 }
 
-.p-menuitem-link:hover {
+.custom-drawer .menu-options a {
     color: black;
-}
-
-.p-menuitem-icon {
-    margin-right: 8px;
-}
-
-.menu-container > button.p-button.p-component.p-button-text {
-    color: white;
-    font-size: 16px;
-    border: none;
-    background: none;
-    cursor: pointer;
-}
-
-button.p-button.p-component.p-button-text:hover {
-    color: black;
-}
-
-.menu-container {
-    display: flex;
-    gap: 10px;
-}
-
-.menu-button {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    background-color: #e35050;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: background-color 0.3s;
-}
-
-.menu-button:hover {
-    background-color: #e46d6d;
-}
-
-.menu-button .p-menuitem-icon {
-    margin-right: 8px;
-}
-
-.button-logout{
-    color: white !important;
-    background-color: #e15b5b !important;
-    border: 0px !important;
+    text-decoration: none !important;
 }
 </style>
