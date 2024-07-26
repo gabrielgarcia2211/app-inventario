@@ -14,12 +14,14 @@
         <Select
             :options="clients"
             v-model="formOutput.client"
+            :class="{ 'p-invalid': errors.client }"
             placeholder="Selecciona un cliente"
             optionLabel="name"
             optionValue="name"
             style="width: 100%; margin-top: 12px"
             showClear
         />
+        <small v-if="errors.client" class="p-error">{{ errors.client }}</small>
         <div v-if="isAllSize">
             <div class="size-quantity-form">
                 <div
@@ -96,6 +98,8 @@
 </template>
 
 <script>
+import * as Yup from "yup";
+
 export default {
     props: ["outputVisible", "productId"],
     data() {
@@ -110,6 +114,7 @@ export default {
                 client: null,
                 currentQuantity: null,
             },
+            errors: {},
         };
     },
     components: {},
@@ -122,6 +127,26 @@ export default {
     methods: {
         async initServices() {
             this.clients = await this.$getEnumClientName();
+        },
+        async validateForm() {
+            let initialRules = {
+                client: Yup.string().required("El cliente es obligatorio"),
+            };
+            const schema = Yup.object().shape({
+                ...initialRules,
+            });
+            this.errors = {};
+            try {
+                await schema.validate(this.formOutput, {
+                    abortEarly: false,
+                });
+                return true;
+            } catch (err) {
+                err.inner.forEach((error) => {
+                    this.errors[error.path] = error.message;
+                });
+                return false;
+            }
         },
         getProduct() {
             this.$axios
@@ -145,19 +170,25 @@ export default {
                     this.$readStatusHttp(error);
                 });
         },
-        extractProduct() {
-            this.formOutput.currentQuantity = this.isAllSize
-                ? this.sizes
-                : [this.all];
-            this.$axios
-                .post("/product-size/extract", this.formOutput)
-                .then((response) => {
-                    this.$alertSuccess("Salida procesada");
-                    this.$emit("reload", true);
-                })
-                .catch((error) => {
-                    this.$readStatusHttp(error);
-                });
+        async extractProduct() {
+            const isValid = await this.validateForm();
+            if (isValid) {
+                this.formOutput.currentQuantity = this.isAllSize
+                    ? this.sizes
+                    : [this.all];
+                this.$axios
+                    .post(
+                        "/product-size/extract/" + this.productId,
+                        this.formOutput
+                    )
+                    .then((response) => {
+                        this.$alertSuccess("Salida procesada");
+                        this.$emit("reload", true);
+                    })
+                    .catch((error) => {
+                        this.$readStatusHttp(error);
+                    });
+            }
         },
         handleDialogClose() {
             this.visible = false;

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Repositories\Product;
+namespace App\Repositories\ProductOutflow;
 
-interface ProductRepositoryInterface
+interface ProductOutflowRepositoryInterface
 {
     public function all();
     public function find($id);
