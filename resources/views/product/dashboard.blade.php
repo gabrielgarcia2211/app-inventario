@@ -9,8 +9,6 @@
     <title>Laravel</title>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
     <link href="{{ asset('css/main.css') }}?{{ rand(1, 99999999) }}" rel="stylesheet">
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
@@ -18,8 +16,8 @@
 
 <body>
     <div id="app" class="content">
-        <menu-component></menu-component>
-        <product-component></product-component>
+      <menu-component></menu-component>
+       {{--  <product-component></product-component> --}}
     </div>
 </body>
 
