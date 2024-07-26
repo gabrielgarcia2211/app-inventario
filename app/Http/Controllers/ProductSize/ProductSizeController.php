@@ -4,23 +4,20 @@ namespace App\Http\Controllers\ProductSize;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\ResponseController as Response;
-use App\Models\ProductSize\ProductSize;
-
+use App\Services\ProductSize\ProductSizeService;
 class ProductSizeController extends Controller
 {
-    public function __construct()
+    protected $productSizeService;
+
+    public function __construct(ProductSizeService $productSizeService)
     {
+        $this->productSizeService = $productSizeService;
     }
 
     public function extractProduct(Request $request)
     {
-        $data = $request->all();
-        foreach ($data as $key => $value) {
-            $size = ProductSize::find($value['id']);
-            $size->quantity = $size->quantity - $value['quantity'];
-            $size->save();
-        }
-        return true;
+        $data = $request->all()['currentQuantity'];
+        $this->productSizeService->extractProductAndLogSale($data);
+        return response()->json(['success' => true], 200);
     }
 }

@@ -4,8 +4,8 @@ namespace App\Models\ProductSize;
 
 use App\Enums\Size;
 use App\Models\Product\Product;
-use App\Enums\categoryProductEnum;
 use Illuminate\Database\Eloquent\Model;
+use App\Enums\Product\categoryProductEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ProductSize extends Model

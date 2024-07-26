@@ -3,34 +3,29 @@
 namespace App\Http\Controllers\Product;
 
 use Illuminate\Http\Request;
-use App\Services\FileService;
-use App\Enums\sizeProductEnum;
-use App\Models\Product\Product;
-use App\Enums\categoryProductEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\ProductSize\ProductSize;
+use App\Enums\Product\sizeProductEnum;
+use App\Services\Product\ProductService;
+use App\Enums\Product\categoryProductEnum;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Controllers\ResponseController as Response;
-use App\Repositories\Product\ProductRepositoryInterface;
 
 class ProductController extends Controller
 {
-    protected $productRepository;
-    protected $fileService;
+    protected $productService;
 
-    public function __construct(ProductRepositoryInterface $productRepository, FileService $fileService)
+    public function __construct(ProductService $productService)
     {
-        $this->productRepository = $productRepository;
-        $this->fileService = $fileService;
+        $this->productService = $productService;
     }
 
     public function index(Request $request)
     {
         try {
-            $query = $this->setQuery();
+            $query = $this->productService->getProductsQuery();
             return renderDataTable(
                 $query,
                 $request,
@@ -56,28 +51,9 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         try {
-            $data = $request->all();
-            $sizes = $this->processSizes($data);
-            $path = $data['photo'];
-            unset($data['photo']);
-            $product = $this->productRepository->create($data);
-            if (!empty($sizes)) {
-                foreach ($sizes as $size) {
-                    ProductSize::create([
-                        'product_id' => $product->id,
-                        'size' => $size['size'],
-                        'quantity' => $size['quantity'] ?? 0,
-                    ]);
-                }
-            }
-            if ($product) {
-                $product->photo = $this->fileService->saveFile($path, 1, 'photo');
-                $product->save();
-            }
+            $product = $this->productService->storeProduct($request->all());
             return Response::sendResponse($product, 'Registro creado con exito.');
         } catch (\Exception $ex) {
-            Log::info($ex->getLine());
-            Log::info($ex->getMessage());
             return Response::sendError('Ocurrio un error inesperado al intentar procesar la solicitud', 500);
         }
     }
@@ -85,11 +61,9 @@ class ProductController extends Controller
     public function show($id)
     {
         try {
-            $product = $this->productRepository->find($id);
+            $product = $this->productService->showProduct($id);
             return Response::sendResponse($product, 'Registro obtenido con exito.');
         } catch (\Exception $ex) {
-            Log::info($ex->getLine());
-            Log::info($ex->getMessage());
             return Response::sendError('Ocurrio un error inesperado al intentar procesar la solicitud', 500);
         }
     }
@@ -97,32 +71,9 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, $id)
     {
         try {
-            $data = $request->all();
-            $sizes = $this->processSizes($data);
-            $pattern = '/\bhttps?:\/\/\S+\b/';
-            $path = $data['photo'];
-            unset($data['photo']);
-            if (!preg_match($pattern, $path)) {
-                $currentProduct = Product::find($id);
-                $this->fileService->deleteFile(cleanStorageUrl($currentProduct->photo));
-                $currentProduct->photo = $this->fileService->saveFile($path, 1, 'photo');
-                $currentProduct->save();
-            }
-            $product = $this->productRepository->update($id, $data);
-            if (!empty($sizes)) {
-                ProductSize::where('product_id', $product->id)->delete();
-                foreach ($sizes as $size) {
-                    ProductSize::create([
-                        'product_id' => $product->id,
-                        'size' => $size['size'],
-                        'quantity' => $size['quantity'] ?? 0,
-                    ]);
-                }
-            }
+            $product = $this->productService->updateProduct($request->all(), $id);
             return Response::sendResponse($product, 'Registro actualizado con exito.');
         } catch (\Exception $ex) {
-            Log::info($ex->getLine());
-            Log::info($ex->getMessage());
             return Response::sendError('Ocurrio un error inesperado al intentar procesar la solicitud', 500);
         }
     }
@@ -130,32 +81,11 @@ class ProductController extends Controller
     public function destroy($id)
     {
         try {
-            $currentProduct = Product::find($id);
-            if ($this->fileService->deleteFile(cleanStorageUrl($currentProduct->photo))) {
-                $this->productRepository->delete($id);
-            }
+            $this->productService->deleteProduct($id);
             return Response::sendResponse(true, 'Registro eliminado con exito.');
         } catch (\Exception $ex) {
-            Log::info($ex->getLine());
-            Log::info($ex->getMessage());
             return Response::sendError('Ocurrio un error inesperado al intentar procesar la solicitud', 500);
         }
-    }
-
-    private function setQuery()
-    {
-        return Product::query()
-            ->leftJoin('product_sizes', 'product_sizes.product_id', '=', 'products.id')
-            ->groupBy(
-                'products.id',
-                'products.name',
-                'products.description',
-                'products.price',
-                'products.category',
-                'products.is_total',
-                'products.photo',
-            )
-            ->distinct();
     }
 
     public function getEnumProductSize()
@@ -175,19 +105,5 @@ class ProductController extends Controller
             ];
         }, $categories);
         return response()->json($categoryWithNames);
-    }
-
-
-    private function processSizes(array $data)
-    {
-        if ($data['is_total'] == 'SIZE' && isset($data['sizes']) && is_array($data['sizes'])) {
-            return $data['sizes'];
-        }
-        return [
-            [
-                'size' => 'ALL',
-                'quantity' => $data['quantity'],
-            ]
-        ];
     }
 }

@@ -10,6 +10,7 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__ . '/../routes/web.php',
             __DIR__ . '/../routes/web/product.php',
             __DIR__ . '/../routes/web/product_size.php',
+            __DIR__ . '/../routes/web/client.php',
         ],
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',

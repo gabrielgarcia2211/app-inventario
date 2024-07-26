@@ -2,10 +2,10 @@
 
 namespace App\Models\Product;
 
-use App\Enums\categoryProductEnum;
 use App\Models\ProductSize\ProductSize;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use App\Enums\Product\categoryProductEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Product extends Model

@@ -29,6 +29,20 @@ export default {
                     });
             });
         },
+        $getEnumClientName() {
+            const vm = this;
+            return new Promise((resolve, reject) => {
+                this.$axios
+                    .get(`/clients/list/name`)
+                    .then(function (response) {
+                        resolve(response.data);
+                    })
+                    .catch((error) => {
+                        vm.$readStatusHttp(error);
+                        reject(error);
+                    });
+            });
+        },
         $formatPrice(value) {
             if (isNaN(value)) return value;
             return new Intl.NumberFormat("es-CO", {

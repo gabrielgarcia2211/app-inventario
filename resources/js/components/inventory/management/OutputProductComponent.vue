@@ -9,9 +9,18 @@
         <template #header>
             <h3>Marcar Salida</h3>
         </template>
+        <hr />
+        <h6>{{ headerSale }}</h6>
+        <Select
+            :options="clients"
+            v-model="formOutput.client"
+            placeholder="Selecciona un cliente"
+            optionLabel="name"
+            optionValue="name"
+            style="width: 100%; margin-top: 12px"
+            showClear
+        />
         <div v-if="isAllSize">
-            <hr />
-            <h5>Venta por talla</h5>
             <div class="size-quantity-form">
                 <div
                     v-for="(item, index) in sizes"
@@ -46,8 +55,6 @@
             </div>
         </div>
         <div v-else>
-            <hr />
-            <h5>Venta por total</h5>
             <div class="size-quantity-form">
                 <InputNumber
                     v-model="all.quantity"
@@ -93,19 +100,29 @@ export default {
     props: ["outputVisible", "productId"],
     data() {
         return {
+            headerSale: "Venta...",
             isAllSize: false,
             visible: this.outputVisible,
+            clients: [],
             sizes: null,
             all: {},
+            formOutput: {
+                client: null,
+                currentQuantity: null,
+            },
         };
     },
     components: {},
     watch: {},
     mounted() {},
     created() {
+        this.initServices();
         this.getProduct();
     },
     methods: {
+        async initServices() {
+            this.clients = await this.$getEnumClientName();
+        },
         getProduct() {
             this.$axios
                 .get("/products/" + this.productId)
@@ -113,8 +130,10 @@ export default {
                     const { data } = response.data;
                     this.isAllSize = data?.is_total == "SIZE" ? true : false;
                     if (this.isAllSize) {
+                        this.headerSale = "Venta por talla";
                         this.sizes = data.product_sizes;
                     } else {
+                        this.headerSale = "Venta total";
                         this.all.id = data.product_sizes[0].id;
                         this.all.size = data.product_sizes[0].size;
                         this.all.quantity = data.product_sizes[0].quantity;
@@ -127,9 +146,11 @@ export default {
                 });
         },
         extractProduct() {
-            const currentQuantity = this.isAllSize ? this.sizes : [this.all];
+            this.formOutput.currentQuantity = this.isAllSize
+                ? this.sizes
+                : [this.all];
             this.$axios
-                .post("/product-size/extract", currentQuantity)
+                .post("/product-size/extract", this.formOutput)
                 .then((response) => {
                     this.$alertSuccess("Salida procesada");
                     this.$emit("reload", true);
