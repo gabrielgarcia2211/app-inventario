@@ -1,191 +1,219 @@
 <template>
-    <div class="card mt-5 mb-5 container-product">
-        <DataTable
-            v-model:filters="filters"
-            :loading="loading"
-            :value="products"
-            :paginator="true"
-            :rows="perPage"
-            :sortField="sortField"
-            :sortOrder="sortOrder"
-            :totalRecords="totalRecords"
-            :lazy="true"
-            @page="onPage"
-            @sort="onSort"
-            @filter="onFilters"
-            filterDisplay="menu"
-            removableSort
-            stripedRows
-            scrollable
-            showGridlines
-        >
-            <template #header>
-                <div class="header-container-product mb-2">
-                    <Button
-                        label="Agregar"
-                        icon="pi pi-plus"
-                        rounded
-                        raised
-                        @click="addProduct"
-                    />
-                    <Select
-                        v-model="selectedCategory"
-                        :options="listCategorys"
-                        :optionLabel="optionLabelCategory"
-                        placeholder="Selecciona la categoria"
-                        class="w-full md:w-56"
-                        style="width: 20%"
-                        showClear
-                        @change="changeSelectCategory"
-                    />
-                </div>
-            </template>
-            <Column
-                field="name"
-                header="Nombre"
-                sortable
-                :showClearButton="false"
-                style="min-width: 200px"
+    <Card class="container-product">
+        <template #title>Productos</template>
+        <template #content>
+            <DataTable
+                v-model:filters="filters"
+                :loading="loading"
+                :value="products"
+                :paginator="true"
+                :rows="perPage"
+                :sortField="sortField"
+                :sortOrder="sortOrder"
+                :totalRecords="totalRecords"
+                :lazy="true"
+                @page="onPage"
+                @sort="onSort"
+                @filter="onFilters"
+                filterDisplay="menu"
+                removableSort
+                stripedRows
+                scrollable
+                showGridlines
             >
-                <template #body="{ data }">
-                    {{ data.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText
-                        v-model="filterModel.value"
-                        type="text"
-                        class="p-column-filter"
-                        placeholder="Buscar por nombre"
-                    />
-                </template>
-            </Column>
-            <Column
-                field="description"
-                header="Descripcion"
-                sortable
-                :showClearButton="false"
-                style="min-width: 200px"
-            >
-                <template #body="{ data }">
-                    {{ data.description }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText
-                        v-model="filterModel.value"
-                        type="text"
-                        class="p-column-filter"
-                        placeholder="Buscar por producto"
-                    />
-                </template>
-            </Column>
-            <Column
-                field="price"
-                header="Precio"
-                sortable
-                :showClearButton="false"
-                style="min-width: 200px"
-            >
-                <template #body="{ data }">
-                    {{ $formatPrice(data.price) }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputNumber
-                        v-model="filterModel.value"
-                        type="text"
-                        class="p-column-filter"
-                        placeholder="Buscar por precio"
-                    />
-                </template>
-            </Column>
-            <Column
-                v-if="visibleAjustedPrice"
-                field="adjusted_price"
-                header="Precio por categoria"
-                style="min-width: 200px"
-            >
-                <template #body="{ data }">
-                    {{ $formatPrice(data.adjusted_price) }}
-                </template>
-            </Column>
-            <Column
-                field="category"
-                header="Categoria"
-                sortable
-                :showClearButton="false"
-                style="min-width: 200px"
-            >
-                <template #body="{ data }">
-                    {{ data.category }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText
-                        v-model="filterModel.value"
-                        type="text"
-                        class="p-column-filter"
-                        placeholder="Buscar por categoria"
-                    />
-                </template>
-            </Column>
-            <Column
-                field="size"
-                header="Talla / Cantidad"
-                sortable
-                :showClearButton="false"
-                style="min-width: 200px"
-            >
-                <template #body="{ data }">
-                    <div class="size-tags">
-                        <Tag
-                            v-for="(sizeInfo, index) in $parseSizes(data.sizes)"
-                            :key="index"
-                            :value="`${sizeInfo.size}: ${$formatNumber(
-                                sizeInfo.quantity
-                            )}`"
-                            class="size-tag"
-                        />
+                <template #header>
+                    <div class="header-container-product mb-2">
+                        <div class="header-start">
+                            <Button
+                                label="Agregar"
+                                icon="pi pi-plus"
+                                rounded
+                                raised
+                                @click="addProduct"
+                                style="margin-right: 10px"
+                            />
+                            <Button
+                                label="Realizar pedido"
+                                icon="pi pi-reply"
+                                class="p-button-warn"
+                                style="margin-right: 10px"
+                                rounded
+                                raised
+                                @click="outputGeneralProduct"
+                            />
+                            <Button
+                                label="Limpiar filtros"
+                                icon="pi pi-filter-slash"
+                                class="p-button-danger"
+                                rounded
+                                raised
+                                @click="clearFilters"
+                            />
+                        </div>
+                        <div class="header-end">
+                            <Select
+                                v-model="selectedCategory"
+                                :options="listCategorys"
+                                :optionLabel="optionLabelCategory"
+                                placeholder="Selecciona la categoria"
+                                class="w-full md:w-56"
+                                style="width: 100%"
+                                showClear
+                                @change="changeSelectCategory"
+                            />
+                        </div>
                     </div>
                 </template>
-            </Column>
-            <Column header="Foto">
-                <template #body="{ data }">
-                    <div style="text-align: center">
-                        <Image
-                            :src="data.photo"
-                            :alt="'imagen'"
-                            class="w-24 rounded cursor-pointer"
-                            width="200px"
-                            preview
+                <Column
+                    field="name"
+                    header="Nombre"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ data.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText
+                            v-model="filterModel.value"
+                            type="text"
+                            class="p-column-filter"
+                            placeholder="Buscar por nombre"
                         />
-                    </div>
-                </template>
-            </Column>
-            <Column
-                header="Acciones"
-                style="min-width: 120px; text-align: center"
-            >
-                <template #body="slotProps">
-                    <Button
-                        icon="pi pi-pencil"
-                        class="p-button-rounded p-button-success"
-                        style="margin: 5px"
-                        @click="editProduct(slotProps.data)"
-                    />
-                    <Button
-                        icon="pi pi-reply"
-                        class="p-button-rounded p-button-warn"
-                        style="margin: 5px"
-                        @click="outputProduct(slotProps.data.id)"
-                    />
-                    <Button
-                        icon="pi pi-trash"
-                        class="p-button-rounded p-button-danger"
-                        style="margin: 5px"
-                        @click="deleteProduct(slotProps.data.id)"
-                    />
-                </template>
-            </Column>
-        </DataTable>
-    </div>
+                    </template>
+                </Column>
+                <Column
+                    field="description"
+                    header="Descripcion"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ data.description }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText
+                            v-model="filterModel.value"
+                            type="text"
+                            class="p-column-filter"
+                            placeholder="Buscar por producto"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    v-if="!visibleAjustedPrice"
+                    field="price"
+                    header="Precio"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ $formatPrice(data.price) }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputNumber
+                            v-model="filterModel.value"
+                            type="text"
+                            class="p-column-filter"
+                            placeholder="Buscar por precio"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    v-if="visibleAjustedPrice"
+                    field="adjusted_price"
+                    header="Precio por categoria"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ $formatPrice(data.adjusted_price) }}
+                    </template>
+                </Column>
+                <Column
+                    field="category"
+                    header="Categoria"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ data.category }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText
+                            v-model="filterModel.value"
+                            type="text"
+                            class="p-column-filter"
+                            placeholder="Buscar por categoria"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    field="size"
+                    header="Talla / Cantidad"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        <div class="size-tags">
+                            <Tag
+                                v-for="(sizeInfo, index) in $parseSizes(
+                                    data.sizes
+                                )"
+                                :key="index"
+                                :value="`${sizeInfo.size}: ${$formatNumber(
+                                    sizeInfo.quantity
+                                )}`"
+                                class="size-tag"
+                            />
+                        </div>
+                    </template>
+                </Column>
+                <Column header="Foto">
+                    <template #body="{ data }">
+                        <div style="text-align: center">
+                            <Image
+                                :src="data.photo"
+                                :alt="'imagen'"
+                                class="w-24 rounded cursor-pointer"
+                                width="200px"
+                                preview
+                            />
+                        </div>
+                    </template>
+                </Column>
+                <Column
+                    header="Acciones"
+                    style="min-width: 120px; text-align: center"
+                >
+                    <template #body="slotProps">
+                        <Button
+                            icon="pi pi-pencil"
+                            class="p-button-rounded p-button-success"
+                            style="margin: 5px"
+                            @click="editProduct(slotProps.data)"
+                        />
+                        <Button
+                            icon="pi pi-reply"
+                            class="p-button-rounded p-button-warn"
+                            style="margin: 5px"
+                            @click="outputProduct(slotProps.data.id)"
+                        />
+                        <Button
+                            icon="pi pi-trash"
+                            class="p-button-rounded p-button-danger"
+                            style="margin: 5px"
+                            @click="deleteProduct(slotProps.data.id)"
+                        />
+                    </template>
+                </Column>
+            </DataTable>
+        </template>
+    </Card>
     <!-- gestion de producto -->
     <ManagementProductComponent
         v-if="dialogVisible"
@@ -194,7 +222,7 @@
         @hidden="hiddenManagementProduct"
         @reload="reloadProducts"
     />
-    <!-- salid de producto -->
+    <!-- salida de producto -->
     <OutputProductComponent
         v-if="outputVisible"
         :outputVisible="outputVisible"
@@ -202,12 +230,19 @@
         @hidden="hiddenOutputProduct"
         @reload="reloadProducts"
     />
+    <!-- salida general del producto -->
+    <OutputGeneralProductComponent
+        v-if="generalVisible"
+        :generalVisible="generalVisible"
+        @hidden="hiddenOutputGeneralProduct"
+    />
 </template>
 
 <script>
 import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
 import ManagementProductComponent from "./management/ManagementProductComponent.vue";
 import OutputProductComponent from "./management/OutputProductComponent.vue";
+import OutputGeneralProductComponent from "./management/OutputGeneralProductComponent.vue";
 
 export default {
     data() {
@@ -223,6 +258,7 @@ export default {
             loading: true,
             dialogVisible: false,
             outputVisible: false,
+            generalVisible: false,
             selectedProduct: null,
             listCategorys: [],
             filterSelect: {
@@ -238,6 +274,7 @@ export default {
         FilterOperator,
         ManagementProductComponent,
         OutputProductComponent,
+        OutputGeneralProductComponent,
     },
     created() {
         this.initFilters();
@@ -274,6 +311,11 @@ export default {
                     ],
                 },
             };
+        },
+        clearFilters() {
+            this.initFilters();
+            this.filtroInfo = [];
+            this.fetchProducts();
         },
         async initServices() {
             this.listCategorys = await this.$getEnumProductCategory();
@@ -372,6 +414,9 @@ export default {
         hiddenOutputProduct(status) {
             this.outputVisible = status;
         },
+        hiddenOutputGeneralProduct(status) {
+            this.generalVisible = status;
+        },
         changeSelectCategory(event) {
             this.filterSelect.category = event.value?.name;
             this.visibleAjustedPrice = event.value != null ? true : false;
@@ -384,19 +429,11 @@ export default {
             this.outputVisible = true;
             this.productId = productId;
         },
+        outputGeneralProduct() {
+            this.generalVisible = true;
+        },
     },
 };
 </script>
 
-<style>
-.container-product {
-    margin-right: 20px;
-    margin-left: 20px;
-}
-
-.header-container-product {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-</style>
+<style></style>

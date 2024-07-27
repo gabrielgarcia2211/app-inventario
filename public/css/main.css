@@ -9,6 +9,41 @@
 }
 
 .size-tag {
-    padding: 2px;
+    padding: 8px !important;
     margin: 3px;
+}
+
+.container-product {
+    margin: 25px;
+}
+
+.header-container-product {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.p-invalid {
+    border: 1px solid red;
+}
+
+.p-error {
+    color: red;
+    font-size: 0.75em;
+    display: block;
+}
+
+.size-quantity-form {
+    margin-top: 20px;
+}
+
+.size-quantity-row {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.size-quantity-row .p-float-label {
+    flex: 1;
 }

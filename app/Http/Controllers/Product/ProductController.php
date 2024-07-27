@@ -25,7 +25,6 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         try {
-            //dd($request->query());
             $query = $this->productService->getProductsQuery();
             return renderDataTable(
                 $query,

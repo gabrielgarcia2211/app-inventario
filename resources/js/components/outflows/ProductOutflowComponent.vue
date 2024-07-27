@@ -1,105 +1,108 @@
 <template>
-    <div class="card mt-5 container-product">
-        <DataTable
-            v-model:filters="filters"
-            :loading="loading"
-            :value="products"
-            :paginator="true"
-            :rows="perPage"
-            :sortField="sortField"
-            :sortOrder="sortOrder"
-            :totalRecords="totalRecords"
-            :lazy="true"
-            @page="onPage"
-            @sort="onSort"
-            @filter="onFilters"
-            filterDisplay="menu"
-            removableSort
-            stripedRows
-            scrollable
-            showGridlines
-        >
-            <Column
-                field="client"
-                header="Nombre cliente"
-                sortable
-                :showClearButton="false"
-                style="min-width: 200px"
+    <Card class="container-product">
+        <template #title>Pedidos</template>
+        <template #content>
+            <DataTable
+                v-model:filters="filters"
+                :loading="loading"
+                :value="products"
+                :paginator="true"
+                :rows="perPage"
+                :sortField="sortField"
+                :sortOrder="sortOrder"
+                :totalRecords="totalRecords"
+                :lazy="true"
+                @page="onPage"
+                @sort="onSort"
+                @filter="onFilters"
+                filterDisplay="menu"
+                removableSort
+                stripedRows
+                scrollable
+                showGridlines
             >
-                <template #body="{ data }">
-                    {{ data.client }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText
-                        v-model="filterModel.value"
-                        type="text"
-                        class="p-column-filter"
-                        placeholder="Buscar por cliente"
-                    />
-                </template>
-            </Column>
-            <Column
-                field="name"
-                header="Nombre producto"
-                sortable
-                :showClearButton="false"
-                style="min-width: 200px"
-            >
-                <template #body="{ data }">
-                    {{ data.name }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText
-                        v-model="filterModel.value"
-                        type="text"
-                        class="p-column-filter"
-                        placeholder="Buscar por nombre"
-                    />
-                </template>
-            </Column>
-            <Column
-                field="outflows"
-                header="Talla / Cantidad"
-                sortable
-                :showClearButton="false"
-                style="min-width: 200px"
-            >
-                <template #body="{ data }">
-                    <div class="size-tags">
-                        <Tag
-                            v-for="(sizeInfo, index) in $parseSizes(
-                                data.outflows
-                            )"
-                            :key="index"
-                            :value="`${sizeInfo.size}: ${$formatNumber(
-                                sizeInfo.quantity
-                            )}`"
-                            class="size-tag"
+                <Column
+                    field="client"
+                    header="Nombre cliente"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ data.client }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText
+                            v-model="filterModel.value"
+                            type="text"
+                            class="p-column-filter"
+                            placeholder="Buscar por cliente"
                         />
-                    </div>
-                </template>
-            </Column>
-            <Column
-                field="fecha_salida"
-                header="Fecha de salida"
-                sortable
-                :showClearButton="false"
-                style="min-width: 200px"
-            >
-                <template #body="{ data }">
-                    {{ data.fecha_salida }}
-                </template>
-                <template #filter="{ filterModel }">
-                    <InputText
-                        v-model="filterModel.value"
-                        type="text"
-                        class="p-column-filter"
-                        placeholder="Buscar por nombre"
-                    />
-                </template>
-            </Column>
-        </DataTable>
-    </div>
+                    </template>
+                </Column>
+                <Column
+                    field="name"
+                    header="Nombre producto"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ data.name }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText
+                            v-model="filterModel.value"
+                            type="text"
+                            class="p-column-filter"
+                            placeholder="Buscar por nombre"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    field="outflows"
+                    header="Talla / Cantidad"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        <div class="size-tags">
+                            <Tag
+                                v-for="(sizeInfo, index) in $parseSizes(
+                                    data.outflows
+                                )"
+                                :key="index"
+                                :value="`${sizeInfo.size}: ${$formatNumber(
+                                    sizeInfo.quantity
+                                )}`"
+                                class="size-tag"
+                            />
+                        </div>
+                    </template>
+                </Column>
+                <Column
+                    field="fecha_salida"
+                    header="Fecha de salida"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ data.fecha_salida }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText
+                            v-model="filterModel.value"
+                            type="text"
+                            class="p-column-filter"
+                            placeholder="Buscar por nombre"
+                        />
+                    </template>
+                </Column>
+            </DataTable>
+        </template>
+    </Card>
 </template>
 
 <script>

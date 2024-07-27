@@ -366,7 +366,7 @@ export default {
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-top: 20px;
+    margin-top: 25px;
 }
 
 .product-form-column {
@@ -376,31 +376,6 @@ export default {
 
 .inputtext-product {
     width: 100%;
-}
-
-.p-invalid {
-    border: 1px solid red;
-}
-
-.p-error {
-    color: red;
-    font-size: 0.75em;
-    display: block;
-}
-
-.size-quantity-form {
-    margin-top: 20px;
-}
-
-.size-quantity-row {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    margin-bottom: 1rem;
-}
-
-.size-quantity-row .p-float-label {
-    flex: 1;
 }
 
 #attachPhoto [data-pc-name="pcuploadbutton"]{
