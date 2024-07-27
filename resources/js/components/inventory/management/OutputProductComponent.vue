@@ -20,6 +20,7 @@
             optionValue="name"
             style="width: 100%; margin-top: 12px"
             showClear
+            filter
         />
         <small v-if="errors.client" class="p-error">{{ errors.client }}</small>
         <div v-if="isAllSize">
@@ -171,11 +172,22 @@ export default {
                 });
         },
         async extractProduct() {
+            this.formOutput.currentQuantity = this.isAllSize
+                ? this.sizes
+                : [this.all];
+            const isValidQuantity = this.formOutput.currentQuantity.some(
+                (value) => {
+                    return value.initial_quantity > 0;
+                }
+            );
+            if (!isValidQuantity) {
+                this.$alertWarning(
+                    "No hay stock de ninguna talla para el producto."
+                );
+                return;
+            }
             const isValid = await this.validateForm();
             if (isValid) {
-                this.formOutput.currentQuantity = this.isAllSize
-                    ? this.sizes
-                    : [this.all];
                 this.$axios
                     .post(
                         "/product-size/extract/" + this.productId,

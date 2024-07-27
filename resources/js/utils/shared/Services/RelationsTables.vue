@@ -3,14 +3,18 @@ export default {
     methods: {
         $relationTableProducts(selector) {
             switch (selector) {
+                case "fecha_ingreso":
+                    return "products.created_at";
                 default:
                     return selector;
             }
         },
         $relationTableProductOutflow(selector) {
             switch (selector) {
+                case "client":
+                    return "product_outflows.client_name";
                 case "fecha_salida":
-                    return "products.created_at";
+                    return "product_outflows.created_at";
                 default:
                     return selector;
             }

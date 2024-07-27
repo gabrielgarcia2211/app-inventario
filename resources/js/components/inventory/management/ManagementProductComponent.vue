@@ -78,6 +78,22 @@
         </div>
         <div class="product-form">
             <div class="product-form-column">
+                <Select
+                    :options="sections"
+                    v-model="product.section"
+                    placeholder="Selecciona seccion"
+                    :class="{ 'p-invalid': errors.section }"
+                    optionLabel="name"
+                    optionValue="name"
+                    style="width: 100%"
+                />
+                <small v-if="errors.section" class="p-error">{{
+                    errors.section
+                }}</small>
+            </div>
+        </div>
+        <div class="product-form">
+            <div class="product-form-column">
                 <ToggleButton
                     v-model="isAllSize"
                     onLabel="Total"
@@ -213,11 +229,13 @@ export default {
                 price: 0,
                 quantity: 0,
                 category: "",
+                section: "",
                 is_total: "ALL",
                 photo: null,
             },
             sizes: null,
             categorys: [],
+            sections: [],
             errors: {},
             flagPhoto: false,
         };
@@ -241,6 +259,7 @@ export default {
             this.product.description = this.selectedProduct.description;
             this.product.price = this.selectedProduct.price;
             this.product.category = this.selectedProduct.category;
+            this.product.section = this.selectedProduct.section;
             this.product.is_total = this.selectedProduct.is_total;
             this.product.photo = this.flagPhoto = this.selectedProduct.photo;
             if (currentSize && currentSize.length > 1) {
@@ -256,6 +275,7 @@ export default {
     methods: {
         async initServices() {
             this.categorys = await this.$getEnumProductCategory();
+            this.sections = await this.$getEnumProductSection();
         },
         async validateForm() {
             let initialRules = {
@@ -265,6 +285,7 @@ export default {
                 ),
                 price: Yup.string().required("El precio es obligatorio"),
                 category: Yup.string().required("La categoria es obligatoria"),
+                section: Yup.string().required("La seccion es obligatoria"),
                 photo: Yup.string().required("La foto es obligatoria"),
             };
             const schema = Yup.object().shape({
@@ -378,7 +399,7 @@ export default {
     width: 100%;
 }
 
-#attachPhoto [data-pc-name="pcuploadbutton"]{
+#attachPhoto [data-pc-name="pcuploadbutton"] {
     display: none;
 }
 

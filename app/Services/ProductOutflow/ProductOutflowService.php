@@ -24,8 +24,9 @@ class ProductOutflowService
                 'product_outflows.client_name',
                 'products.name',
                 'products.id',
-                'products.created_at',
+                'product_outflows.created_at',
             )
+            ->orderBy('product_outflows.client_name', 'asc')
             ->distinct();
     }
 }

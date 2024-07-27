@@ -18,6 +18,6 @@ class ProductSizeController extends Controller
 
     public function extractProduct(StoreProductSizeRequest $request, $id)
     {
-        return $this->productSizeService->extractProductAndLogSale($request->all(), $id);
+        return $this->productSizeService->extractProductSale($request->all(), $id);
     }
 }

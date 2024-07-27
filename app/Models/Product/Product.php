@@ -17,6 +17,7 @@ class Product extends Model
         'description',
         'price',
         'category',
+        'section',
         'is_total',
         'photo',
     ];

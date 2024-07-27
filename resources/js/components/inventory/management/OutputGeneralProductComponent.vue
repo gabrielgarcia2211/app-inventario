@@ -23,6 +23,7 @@
                     optionValue="name"
                     style="width: 100%; margin-top: 12px"
                     showClear
+                    filter
                 />
                 <small v-if="errors.client" class="p-error">{{
                     errors.client
@@ -132,14 +133,13 @@
                 </div>
             </div>
         </div>
-
         <template #footer>
             <div class="text-center">
                 <Button
                     label="Marcar"
                     severity="success"
                     style="margin-right: 10px"
-                    @click="saveOutput"
+                    @click="extractGeneralProduct"
                 />
                 <Button
                     label="Cancelar"
@@ -179,6 +179,7 @@ export default {
             filters: null,
             filtroInfo: [],
             loading: true,
+            productId: null,
         };
     },
     components: {
@@ -188,18 +189,8 @@ export default {
     watch: {
         "formOutput.product"(value) {
             if (!value) return;
-            const parseQuantitys = this.$parseSizes(value.sizes);
-            this.isAllSize = value?.is_total;
-            if (this.isAllSize == "SIZE") {
-                this.sizes = parseQuantitys.map((item) => ({
-                    ...item,
-                    initial_quantity: item.quantity,
-                }));
-            } else {
-                this.all.size = parseQuantitys[0].size;
-                this.all.quantity = parseQuantitys[0].quantity;
-                this.all.initial_quantity = parseQuantitys[0].quantity;
-            }
+            this.productId = value.id;
+            this.getProduct(value.id);
         },
     },
     created() {
@@ -238,10 +229,57 @@ export default {
                 return false;
             }
         },
-        async saveOutput() {
+        getProduct(productId) {
+            this.$axios
+                .get("/products/" + productId)
+                .then((response) => {
+                    const { data } = response.data;
+                    this.isAllSize = data?.is_total;
+                    if (this.isAllSize == "SIZE") {
+                        this.sizes = data.product_sizes;
+                    } else {
+                        this.all.id = data.product_sizes[0].id;
+                        this.all.size = data.product_sizes[0].size;
+                        this.all.quantity = data.product_sizes[0].quantity;
+                        this.all.initial_quantity =
+                            data.product_sizes[0].initial_quantity;
+                    }
+                })
+                .catch((error) => {
+                    this.$readStatusHttp(error);
+                });
+        },
+        async extractGeneralProduct() {
+            this.formOutput.currentQuantity =
+                this.isAllSize == "SIZE" ? this.sizes : [this.all];
+            const isValidQuantity = this.formOutput.currentQuantity.some(
+                (value) => {
+                    return value.initial_quantity > 0;
+                }
+            );
+            if (
+                !isValidQuantity ||
+                this.formOutput.currentQuantity.length == 0
+            ) {
+                this.$alertWarning(
+                    "No hay stock de ninguna talla para el producto."
+                );
+                return;
+            }
             const isValid = await this.validateForm();
             if (isValid) {
-                console.log(this.formOutput);
+                this.$axios
+                    .post(
+                        "/product-size/extract/" + this.productId,
+                        this.formOutput
+                    )
+                    .then((response) => {
+                        this.$alertSuccess("Salida procesada");
+                        this.$emit("reload", true);
+                    })
+                    .catch((error) => {
+                        this.$readStatusHttp(error);
+                    });
             }
         },
         handleDialogClose() {

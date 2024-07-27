@@ -10,7 +10,7 @@ use App\Models\ProductOutflowDetail\ProductOutflowDetail;
 
 class ProductSizeService
 {
-    public function extractProductAndLogSale(array $data, $id)
+    public function extractProductSale(array $data, $id)
     {
         return DB::transaction(function () use ($data, $id) {
             $list = $data['currentQuantity'];

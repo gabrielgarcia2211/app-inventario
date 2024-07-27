@@ -152,6 +152,25 @@
                     </template>
                 </Column>
                 <Column
+                    field="section"
+                    header="Seccion"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ data.section }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText
+                            v-model="filterModel.value"
+                            type="text"
+                            class="p-column-filter"
+                            placeholder="Buscar por seccion"
+                        />
+                    </template>
+                </Column>
+                <Column
                     field="size"
                     header="Talla / Cantidad"
                     sortable
@@ -165,12 +184,37 @@
                                     data.sizes
                                 )"
                                 :key="index"
-                                :value="`${sizeInfo.size}: ${$formatNumber(
-                                    sizeInfo.quantity
-                                )}`"
+                                :value="`${$formatTextSize(
+                                    sizeInfo.size
+                                )}: ${$formatNumber(sizeInfo.quantity)}`"
                                 class="size-tag"
                             />
                         </div>
+                        <Tag
+                            :value="`Total: ${$formatNumber(
+                                data.total_quantity
+                            )}`"
+                            class="size-tag-total"
+                        />
+                    </template>
+                </Column>
+                <Column
+                    field="fecha_ingreso"
+                    header="Fecha de ingreso"
+                    sortable
+                    :showClearButton="false"
+                    style="min-width: 200px"
+                >
+                    <template #body="{ data }">
+                        {{ data.fecha_ingreso }}
+                    </template>
+                    <template #filter="{ filterModel }">
+                        <InputText
+                            v-model="filterModel.value"
+                            type="text"
+                            class="p-column-filter"
+                            placeholder="Buscar por fecha"
+                        />
                     </template>
                 </Column>
                 <Column header="Foto">
@@ -235,6 +279,7 @@
         v-if="generalVisible"
         :generalVisible="generalVisible"
         @hidden="hiddenOutputGeneralProduct"
+        @reload="reloadProducts"
     />
 </template>
 
@@ -310,6 +355,18 @@ export default {
                         { value: null, matchMode: FilterMatchMode.STARTS_WITH },
                     ],
                 },
+                section: {
+                    clear: false,
+                    constraints: [
+                        { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+                    ],
+                },
+                fecha_ingreso: {
+                    clear: false,
+                    constraints: [
+                        { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+                    ],
+                },
             };
         },
         clearFilters() {
@@ -374,7 +431,10 @@ export default {
         reloadProducts() {
             this.fetchProducts();
             this.selectedProduct = this.productId = null;
-            this.dialogVisible = this.outputVisible = false;
+            this.dialogVisible =
+                this.outputVisible =
+                this.generalVisible =
+                    false;
         },
         addProduct() {
             this.selectedProduct = null;
@@ -387,7 +447,7 @@ export default {
         async deleteProduct(productId) {
             const result = await this.$swal.fire({
                 title: "¿Estás seguro?",
-                text: "Estás a punto de eliminar esta imagen. ¿Estás seguro de que deseas continuar?",
+                text: "Estás a punto de eliminar este producto. ¿Estás seguro de que deseas continuar?",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
@@ -403,6 +463,7 @@ export default {
                         (product) => product.id !== productId
                     );
                     this.$alertSuccess("Producto eliminado con éxito");
+                    this.fetchProducts();
                 } catch (error) {
                     this.$readStatusHttp(error);
                 }

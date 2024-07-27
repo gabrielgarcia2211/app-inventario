@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Enums\Product\sizeProductEnum;
 use App\Services\Product\ProductService;
+use App\Enums\Product\sectionProductEnum;
 use App\Enums\Product\categoryProductEnum;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
@@ -36,9 +37,12 @@ class ProductController extends Controller
                     'products.description',
                     'products.price',
                     'products.category',
+                    'products.section',
                     'products.is_total',
                     'products.photo',
-                    DB::raw('GROUP_CONCAT(CONCAT(product_sizes.size, ":", product_sizes.quantity) ORDER BY product_sizes.size ASC SEPARATOR ";") as sizes')
+                    DB::raw("DATE_FORMAT(products.created_at, '%d-%m-%Y %H:%i:%s') as fecha_ingreso"),
+                    DB::raw('GROUP_CONCAT(CONCAT(product_sizes.size, ":", product_sizes.quantity) ORDER BY product_sizes.size ASC SEPARATOR ";") as sizes'),
+                    DB::raw('SUM(product_sizes.quantity) as total_quantity')
                 ]
             );
         } catch (\Exception $ex) {
@@ -105,5 +109,16 @@ class ProductController extends Controller
             ];
         }, $categories);
         return response()->json($categoryWithNames);
+    }
+
+    public function getEnumProductSection()
+    {
+        $sections = sectionProductEnum::cases();
+        $sectionWithNames = array_map(function ($section) {
+            return [
+                'name' => $section->value
+            ];
+        }, $sections);
+        return response()->json($sectionWithNames);
     }
 }

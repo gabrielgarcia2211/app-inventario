@@ -5,6 +5,8 @@
             <DataTable
                 v-model:filters="filters"
                 :loading="loading"
+                rowGroupMode="rowspan" 
+                groupRowsBy="client"
                 :value="products"
                 :paginator="true"
                 :rows="perPage"
@@ -24,7 +26,6 @@
                 <Column
                     field="client"
                     header="Nombre cliente"
-                    sortable
                     :showClearButton="false"
                     style="min-width: 200px"
                 >
@@ -73,12 +74,18 @@
                                     data.outflows
                                 )"
                                 :key="index"
-                                :value="`${sizeInfo.size}: ${$formatNumber(
-                                    sizeInfo.quantity
-                                )}`"
+                                :value="`${$formatTextSize(
+                                    sizeInfo.size
+                                )}: ${$formatNumber(sizeInfo.quantity)}`"
                                 class="size-tag"
                             />
                         </div>
+                        <Tag
+                            :value="`Total: ${$formatNumber(
+                                data.total_quantity
+                            )}`"
+                            class="size-tag-total"
+                        />
                     </template>
                 </Column>
                 <Column
@@ -96,7 +103,7 @@
                             v-model="filterModel.value"
                             type="text"
                             class="p-column-filter"
-                            placeholder="Buscar por nombre"
+                            placeholder="Buscar por fecha"
                         />
                     </template>
                 </Column>
