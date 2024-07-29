@@ -13,6 +13,23 @@
                 raised
                 style="margin-left: 10px"
             />
+            <div class="custom-button-info">
+                <Button
+                    icon="pi pi-bell"
+                    severity="info"
+                    @click="notificationVisible = true"
+                    raised
+                />
+                <span class="badge">{{ cantNotifications }}</span>
+            </div>
+            <NotificationComponent
+                v-if="notificationVisible"
+                :notificationVisible="notificationVisible"
+                @hidden="hiddenOutputNotification"
+                @reload="reloadNotifications"
+            >
+            </NotificationComponent>
+            <div></div>
         </template>
         <template #end>
             <Button
@@ -62,20 +79,38 @@
 import Avatar from "primevue/avatar";
 import Drawer from "primevue/drawer";
 import Menubar from "primevue/menubar";
+import NotificationComponent from "./notification/NotificationComponent.vue";
 
 export default {
     data() {
         return {
             visible: false,
             items: [],
+            notificationVisible: false,
+            cantNotifications: 0,
         };
     },
     components: {
         Avatar,
         Drawer,
         Menubar,
+        NotificationComponent,
+    },
+    mounted() {
+        this.loadNotifications();
     },
     methods: {
+        loadNotifications() {
+            this.$axios
+                .get("/notifications/list/noread")
+                .then((response) => {
+                    const { data } = response.data;
+                    this.cantNotifications = data;
+                })
+                .catch((error) => {
+                    this.$readStatusHttp(error);
+                });
+        },
         logout() {
             axios
                 .post("/logout")
@@ -85,6 +120,12 @@ export default {
                 .catch((error) => {
                     this.$readStatusHttp(error);
                 });
+        },
+        hiddenOutputNotification(status) {
+            this.notificationVisible = status;
+        },
+        reloadNotifications() {
+            this.loadNotifications();
         },
     },
 };
@@ -129,5 +170,31 @@ export default {
 .custom-drawer .menu-options a {
     color: black;
     text-decoration: none !important;
+}
+
+.custom-button-info {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin-left: 20px;
+}
+
+.custom-button-info button {
+    width: 40px;
+}
+
+.badge {
+    position: absolute;
+    right: -22px;
+    top: -10px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
 }
 </style>

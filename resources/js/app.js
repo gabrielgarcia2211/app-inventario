@@ -35,6 +35,11 @@ const app = createApp({});
 app.use(PrimeVue, {
     theme: {
         preset: Aura,
+        options: {
+            prefix: "p",
+            darkModeSelector: "none",
+            cssLayer: false,
+        },
     },
 });
 

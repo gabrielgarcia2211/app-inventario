@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Services\ProductNotification\ProductNotificationService;
+use App\Services\Notification\NotificationService;
 
 class CheckProductNotifications extends Command
 {
@@ -12,7 +12,7 @@ class CheckProductNotifications extends Command
 
     protected $productNotificationChecker;
 
-    public function __construct(ProductNotificationService $productNotificationChecker)
+    public function __construct(NotificationService $productNotificationChecker)
     {
         parent::__construct();
         $this->productNotificationChecker = $productNotificationChecker;
@@ -20,7 +20,8 @@ class CheckProductNotifications extends Command
 
     public function handle()
     {
-        $this->productNotificationChecker->checkAndStoreNotifications();
+        $this->productNotificationChecker->handleLowInventoryNotifications();
+        $this->productNotificationChecker->handleStagnantProductNotifications();
         $this->info('Product notifications check completed.');
     }
 }
