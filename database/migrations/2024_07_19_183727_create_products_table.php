@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('name');
             $table->text('description');
             $table->double('price');
-            $table->string('category');
             $table->string('section');
             $table->string('is_total');
             $table->string('photo')->nullable();

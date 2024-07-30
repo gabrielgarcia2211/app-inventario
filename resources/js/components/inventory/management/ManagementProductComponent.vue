@@ -63,22 +63,6 @@
         <div class="product-form">
             <div class="product-form-column">
                 <Select
-                    :options="categorys"
-                    v-model="product.category"
-                    placeholder="Selecciona categoria"
-                    :class="{ 'p-invalid': errors.category }"
-                    optionLabel="name"
-                    optionValue="name"
-                    style="width: 100%"
-                />
-                <small v-if="errors.category" class="p-error">{{
-                    errors.category
-                }}</small>
-            </div>
-        </div>
-        <div class="product-form">
-            <div class="product-form-column">
-                <Select
                     :options="sections"
                     v-model="product.section"
                     placeholder="Selecciona seccion"
@@ -228,13 +212,11 @@ export default {
                 description: "",
                 price: 0,
                 quantity: 0,
-                category: "",
                 section: "",
                 is_total: "ALL",
                 photo: null,
             },
             sizes: null,
-            categorys: [],
             sections: [],
             errors: {},
             flagPhoto: false,
@@ -258,7 +240,6 @@ export default {
             this.product.name = this.selectedProduct.name;
             this.product.description = this.selectedProduct.description;
             this.product.price = this.selectedProduct.price;
-            this.product.category = this.selectedProduct.category;
             this.product.section = this.selectedProduct.section;
             this.product.is_total = this.selectedProduct.is_total;
             this.product.photo = this.flagPhoto = this.selectedProduct.photo;
@@ -274,7 +255,6 @@ export default {
     },
     methods: {
         async initServices() {
-            this.categorys = await this.$getEnumProductCategory();
             this.sections = await this.$getEnumProductSection();
         },
         async validateForm() {
@@ -284,7 +264,6 @@ export default {
                     "La descripcion es obligatoria"
                 ),
                 price: Yup.string().required("El precio es obligatorio"),
-                category: Yup.string().required("La categoria es obligatoria"),
                 section: Yup.string().required("La seccion es obligatoria"),
                 photo: Yup.string().required("La foto es obligatoria"),
             };

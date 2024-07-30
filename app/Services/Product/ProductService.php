@@ -29,7 +29,6 @@ class ProductService
                 'products.name',
                 'products.description',
                 'products.price',
-                'products.category',
                 'products.section',
                 'products.is_total',
                 'products.photo',

@@ -32,12 +32,13 @@ class NotificationController extends Controller
                     'notifications.read_at',
                     'notifications.data',
                     DB::raw("
-                    CASE
-                        WHEN notifiable_type = 'LowInventoryNotification' THEN 'cantidad baja'
-                        WHEN notifiable_type = 'StagnantProductNotification' THEN 'producto estancado'
-                        ELSE 'otro'
-                    END as notifiable_type
-                ")
+                        CASE
+                            WHEN notifiable_type = 'LowInventoryNotification' THEN 'cantidad baja'
+                            WHEN notifiable_type = 'StagnantProductNotification' THEN 'producto estancado'
+                            ELSE 'otro'
+                        END as notifiable_type
+                    "),
+                    DB::raw("DATE_FORMAT(notifications.created_at, '%d-%m-%Y %H:%i:%s') as date_entry"),
                 ]
             );
         } catch (\Exception $ex) {

@@ -84,6 +84,14 @@ export default {
                 return { size, quantity: parseInt(quantity) };
             });
         },
+        $percentagePrice(value, category) {
+            if (category) {
+                const percentage = category.percentage;
+                const resp = value * (1 + percentage);
+                return this.$formatPrice(resp);
+            }
+            return null;
+        },
     },
 };
 </script>

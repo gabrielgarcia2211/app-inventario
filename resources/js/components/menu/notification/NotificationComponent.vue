@@ -3,7 +3,7 @@
         v-model:visible="visible"
         modal
         class="dialog-management-product"
-        :style="{ width: '30rem' }"
+        :style="{ width: '40rem' }"
         :draggable="false"
         :position="'top'"
         :dismissableMask="true"
@@ -32,10 +32,18 @@
                     >
                         {{ JSON.parse(slotProps.data.data)["product_name"] }} |
                         {{ slotProps.data.notifiable_type.toUpperCase() }}
+                        <br />
+                        <p style="font-size: 14px; font-weight: bold">
+                            {{ slotProps.data.date_entry }}
+                        </p>
                     </div>
                     <div v-else class="old-notification">
                         {{ JSON.parse(slotProps.data.data)["product_name"] }} |
                         {{ slotProps.data.notifiable_type.toUpperCase() }}
+                        <br />
+                        <p style="font-size: 14px; font-weight: bold">
+                            {{ slotProps.data.date_entry }}
+                        </p>
                     </div>
                 </template>
             </Column>
@@ -127,7 +135,7 @@ export default {
 </script>
 <style>
 .new-notification {
-    background-color: #2ca560;
+    background-color: rgb(35, 183, 99);
     color: white;
     padding: 14px !important;
     cursor: pointer;

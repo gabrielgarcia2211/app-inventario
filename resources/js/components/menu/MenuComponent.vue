@@ -18,9 +18,12 @@
                     icon="pi pi-bell"
                     severity="info"
                     @click="notificationVisible = true"
+                    :text="!cantNotifications"
                     raised
                 />
-                <span class="badge">{{ cantNotifications }}</span>
+                <span class="badge" v-if="cantNotifications">{{
+                    cantNotifications
+                }}</span>
             </div>
             <NotificationComponent
                 v-if="notificationVisible"

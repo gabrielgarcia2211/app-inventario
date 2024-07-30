@@ -124,31 +124,12 @@
                 </Column>
                 <Column
                     v-if="visibleAjustedPrice"
-                    field="adjusted_price"
+                    field="price"
                     header="Precio por categoria"
                     style="min-width: 200px"
                 >
                     <template #body="{ data }">
-                        {{ $formatPrice(data.adjusted_price) }}
-                    </template>
-                </Column>
-                <Column
-                    field="category"
-                    header="Categoria"
-                    sortable
-                    :showClearButton="false"
-                    style="min-width: 200px"
-                >
-                    <template #body="{ data }">
-                        {{ data.category }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText
-                            v-model="filterModel.value"
-                            type="text"
-                            class="p-column-filter"
-                            placeholder="Buscar por categoria"
-                        />
+                        {{ $percentagePrice(data.price, selectedCategory) }}
                     </template>
                 </Column>
                 <Column
@@ -195,25 +176,6 @@
                                 data.total_quantity
                             )}`"
                             class="size-tag-total"
-                        />
-                    </template>
-                </Column>
-                <Column
-                    field="fecha_ingreso"
-                    header="Fecha de ingreso"
-                    sortable
-                    :showClearButton="false"
-                    style="min-width: 200px"
-                >
-                    <template #body="{ data }">
-                        {{ data.fecha_ingreso }}
-                    </template>
-                    <template #filter="{ filterModel }">
-                        <InputText
-                            v-model="filterModel.value"
-                            type="text"
-                            class="p-column-filter"
-                            placeholder="Buscar por fecha"
                         />
                     </template>
                 </Column>
@@ -349,19 +311,7 @@ export default {
                         { value: null, matchMode: FilterMatchMode.STARTS_WITH },
                     ],
                 },
-                category: {
-                    clear: false,
-                    constraints: [
-                        { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-                    ],
-                },
                 section: {
-                    clear: false,
-                    constraints: [
-                        { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-                    ],
-                },
-                fecha_ingreso: {
                     clear: false,
                     constraints: [
                         { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -479,7 +429,6 @@ export default {
             this.generalVisible = status;
         },
         changeSelectCategory(event) {
-            this.filterSelect.category = event.value?.name;
             this.visibleAjustedPrice = event.value != null ? true : false;
             this.fetchProducts();
         },

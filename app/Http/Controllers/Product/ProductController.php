@@ -36,11 +36,9 @@ class ProductController extends Controller
                     'products.name',
                     'products.description',
                     'products.price',
-                    'products.category',
                     'products.section',
                     'products.is_total',
                     'products.photo',
-                    DB::raw("DATE_FORMAT(products.created_at, '%d-%m-%Y %H:%i:%s') as fecha_ingreso"),
                     DB::raw('GROUP_CONCAT(CONCAT(product_sizes.size, ":", product_sizes.quantity) ORDER BY product_sizes.size ASC SEPARATOR ";") as sizes'),
                     DB::raw('SUM(product_sizes.quantity) as total_quantity')
                 ]
