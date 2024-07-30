@@ -33,6 +33,15 @@
                                 style="margin-right: 10px"
                             />
                             <Button
+                                label="Entrada producto"
+                                icon="pi pi-address-book"
+                                class="p-button-info"
+                                style="margin-right: 10px"
+                                rounded
+                                raised
+                                @click="entryProduct"
+                            />
+                            <Button
                                 label="Realizar pedido"
                                 icon="pi pi-reply"
                                 class="p-button-warn"
@@ -129,7 +138,7 @@
                     style="min-width: 200px"
                 >
                     <template #body="{ data }">
-                        {{ $percentagePrice(data.price, selectedCategory) }}
+                        {{ $percentagePrice(data.price, selectedCategory.value1) }}
                     </template>
                 </Column>
                 <Column
@@ -325,7 +334,10 @@ export default {
             this.fetchProducts();
         },
         async initServices() {
-            this.listCategorys = await this.$getEnumProductCategory();
+            const comboNames = ["category"];
+            const response = await this.$getEnumsOptions(comboNames);
+            const { category: responseCategory } = response.data;
+            this.listCategorys = responseCategory;
         },
         onPage(event) {
             this.page = event.page + 1;
@@ -394,6 +406,7 @@ export default {
             this.selectedProduct = product;
             this.dialogVisible = true;
         },
+        entryProduct() {},
         async deleteProduct(productId) {
             const result = await this.$swal.fire({
                 title: "¿Estás seguro?",
@@ -433,7 +446,7 @@ export default {
             this.fetchProducts();
         },
         optionLabelCategory(option) {
-            return `${option.name} | ${option.percentage * 100}%`;
+            return `${option.name} | ${option.value1 * 100}%`;
         },
         outputProduct(productId) {
             this.outputVisible = true;

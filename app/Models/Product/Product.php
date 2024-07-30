@@ -5,7 +5,6 @@ namespace App\Models\Product;
 use App\Models\ProductSize\ProductSize;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
-use App\Enums\Product\categoryProductEnum;
 use App\Models\ProductOutflow\ProductOutflow;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 

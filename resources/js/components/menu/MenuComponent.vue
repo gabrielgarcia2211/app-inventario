@@ -70,6 +70,12 @@
             </li>
             <li>
                 <a href="/outflows" class="p-menuitem-link menu-button">
+                    <i class="pi pi-address-book p-menuitem-icon"></i>
+                    <span class="p-menuitem-text">Entrada de Productos</span>
+                </a>
+            </li>
+            <li>
+                <a href="/outflows" class="p-menuitem-link menu-button">
                     <i class="pi pi-sign-in p-menuitem-icon"></i>
                     <span class="p-menuitem-text">Salida de Productos</span>
                 </a>
@@ -173,6 +179,7 @@ export default {
 .custom-drawer .menu-options a {
     color: black;
     text-decoration: none !important;
+    margin-top: 5px;
 }
 
 .custom-button-info {

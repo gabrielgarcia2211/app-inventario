@@ -14,6 +14,5 @@ Route::prefix('products')->middleware('auth')->group(function () {
     Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
     Route::get('/list/size', [ProductController::class, 'getEnumProductSize'])->name('products.size');
-    Route::get('/list/category', [ProductController::class, 'getEnumProductCategory'])->name('products.category');
     Route::get('/list/section', [ProductController::class, 'getEnumProductSection'])->name('products.section');
 });

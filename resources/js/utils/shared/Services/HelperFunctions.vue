@@ -15,20 +15,6 @@ export default {
                     });
             });
         },
-        $getEnumProductCategory() {
-            const vm = this;
-            return new Promise((resolve, reject) => {
-                this.$axios
-                    .get(`/products/list/category`)
-                    .then(function (response) {
-                        resolve(response.data);
-                    })
-                    .catch((error) => {
-                        vm.$readStatusHttp(error);
-                        reject(error);
-                    });
-            });
-        },
         $getEnumProductSection() {
             const vm = this;
             return new Promise((resolve, reject) => {
@@ -84,13 +70,26 @@ export default {
                 return { size, quantity: parseInt(quantity) };
             });
         },
-        $percentagePrice(value, category) {
-            if (category) {
-                const percentage = category.percentage;
+        $percentagePrice(value, percentage) {
+            if (percentage) {
                 const resp = value * (1 + percentage);
                 return this.$formatPrice(resp);
             }
             return null;
+        },
+        $getEnumsOptions(type) {
+            const vm = this;
+            return new Promise((resolve, reject) => {
+                this.$axios
+                    .get(`/enum/option/${type.join(",")}`)
+                    .then(function (response) {
+                        resolve(response.data);
+                    })
+                    .catch((error) => {
+                        vm.$readStatusHttp(error);
+                        reject(error);
+                    });
+            });
         },
     },
 };

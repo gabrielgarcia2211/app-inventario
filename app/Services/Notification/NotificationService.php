@@ -2,11 +2,11 @@
 
 namespace App\Services\Notification;
 
-use App\Models\Notification\Notification;
 use Illuminate\Support\Carbon;
 use App\Models\Product\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Notification\Notification;
 use App\Repositories\Notification\NotificationRepositoryInterface;
 
 class NotificationService
