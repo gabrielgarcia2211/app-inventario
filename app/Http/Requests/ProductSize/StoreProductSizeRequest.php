@@ -22,14 +22,14 @@ class StoreProductSizeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client' => 'required|string',
+            'client_id' => 'required',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'client.required' => 'El campo cliente es obligatorio.',
+            'client_id.required' => 'El campo cliente es obligatorio.',
         ];
     }
 }

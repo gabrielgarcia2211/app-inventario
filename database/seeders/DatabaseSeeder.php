@@ -2,13 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-
 use Illuminate\Database\Seeder;
 use Database\Seeders\User\UserSeeder;
-use Database\Seeders\Product\ProductSeeder;
 use Database\Seeders\Configuration\CoreEnumTableSeeder;
+use Database\Seeders\Configuration\CoreEnumClientSeeder;
 use Database\Seeders\Configuration\CoreEnumCategorySeeder;
+use Database\Seeders\Configuration\CoreEnumSeamstresSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,5 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(CoreEnumTableSeeder::class);
         $this->call(CoreEnumCategorySeeder::class);
+        $this->call(CoreEnumClientSeeder::class);
+        $this->call(CoreEnumSeamstresSeeder::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\ProductSize;
 
+use App\Models\Configuration\EnumOption;
 use Illuminate\Support\Facades\DB;
 use App\Models\ProductSize\ProductSize;
 use Illuminate\Support\Facades\Validator;
@@ -17,7 +18,7 @@ class ProductSizeService
             // guardamos el detalle de cada producto
             $productOutflow = ProductOutflow::create([
                 'product_id' => $id,
-                'client_name' => $data['client'],
+                'client_id' => $data['client_id'],
             ]);
             foreach ($list as $value) {
                 $size = ProductSize::find($value['id']);

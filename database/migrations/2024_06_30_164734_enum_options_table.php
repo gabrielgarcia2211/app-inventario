@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('enum_options', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('parent_id')->unsigned();
+            $table->id();
+            $table->bigInteger('parent_id')->unsigned();
             $table->string('code')->index()->unique()->nullable();
             $table->string('name')->index();
             $table->string('description', 255)->nullable();

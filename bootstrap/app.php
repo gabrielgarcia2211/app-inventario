@@ -10,7 +10,6 @@ return Application::configure(basePath: dirname(__DIR__))
             __DIR__ . '/../routes/web.php',
             __DIR__ . '/../routes/web/product.php',
             __DIR__ . '/../routes/web/product_size.php',
-            __DIR__ . '/../routes/web/client.php',
             __DIR__ . '/../routes/web/outflow.php',
             __DIR__ . '/../routes/web/notification.php',
             __DIR__ . '/../routes/web/enum.php',

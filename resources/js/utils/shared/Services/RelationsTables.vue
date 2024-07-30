@@ -10,7 +10,7 @@ export default {
         $relationTableProductOutflow(selector) {
             switch (selector) {
                 case "client":
-                    return "product_outflows.client_name";
+                    return "enum_options.name";
                 case "fecha_salida":
                     return "product_outflows.created_at";
                 default:

@@ -27,7 +27,7 @@ class ProductOutflowController extends Controller
                 $request,
                 [],
                 [
-                    'product_outflows.client_name as client',
+                    'enum_options.name as client',
                     'products.name as name',
                     'products.id as product_id',
                     DB::raw("DATE_FORMAT(product_outflows.created_at, '%d-%m-%Y %H:%i:%s') as fecha_salida"),

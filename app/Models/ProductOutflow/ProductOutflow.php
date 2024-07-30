@@ -13,7 +13,7 @@ class ProductOutflow extends Model
 
     protected $fillable = [
         'product_id',
-        'client_name',
+        'client_id',
     ];
 
     public function product()
