@@ -1,27 +1,27 @@
 <?php
 
-namespace App\Http\Controllers\ProductOutflow;
+namespace App\Http\Controllers\ProductInput;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Services\ProductOutflow\ProductOutflowService;
+use App\Services\ProductInput\ProductInputService;
 use App\Http\Controllers\ResponseController as Response;
 
-class ProductOutflowController extends Controller
+class ProductInputController extends Controller
 {
-    protected $productOutflowService;
+    protected $productInputService;
 
-    public function __construct(ProductOutflowService $productOutflowService)
+    public function __construct(ProductInputService $productInputService)
     {
-        $this->productOutflowService = $productOutflowService;
+        $this->productInputService = $productInputService;
     }
 
     public function index(Request $request)
     {
         try {
-            $query = $this->productOutflowService->getProductOutflowsQuery();
+            $query = $this->productInputService->getProductInputsQuery();
             return renderDataTable(
                 $query,
                 $request,

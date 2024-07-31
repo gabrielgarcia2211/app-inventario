@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Enums\Product\sizeProductEnum;
 use App\Services\Product\ProductService;
 use App\Enums\Product\sectionProductEnum;
-use App\Enums\Product\categoryProductEnum;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Controllers\ResponseController as Response;
@@ -95,18 +94,6 @@ class ProductController extends Controller
         $sizes = sizeProductEnum::getValues();
         $sizesWithQuantity = array_map(fn ($size) => ['size' => $size, 'quantity' => 0], $sizes);
         return response()->json($sizesWithQuantity);
-    }
-
-    public function getEnumProductCategory()
-    {
-        $categories = categoryProductEnum::cases();
-        $categoryWithNames = array_map(function ($category) {
-            return [
-                'name' => $category->value,
-                'percentage' => $category->getPercentage()
-            ];
-        }, $categories);
-        return response()->json($categoryWithNames);
     }
 
     public function getEnumProductSection()

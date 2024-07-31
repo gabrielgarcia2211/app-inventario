@@ -13,16 +13,16 @@
         <h6>{{ headerSale }}</h6>
         <Select
             :options="clients"
-            v-model="formOutput.client"
-            :class="{ 'p-invalid': errors.client }"
+            v-model="formOutput.client_id"
+            :class="{ 'p-invalid': errors.client_id }"
             placeholder="Selecciona un cliente"
             optionLabel="name"
-            optionValue="name"
+            optionValue="id"
             style="width: 100%; margin-top: 12px"
             showClear
             filter
         />
-        <small v-if="errors.client" class="p-error">{{ errors.client }}</small>
+        <small v-if="errors.client_id" class="p-error">{{ errors.client_id }}</small>
         <div v-if="isAllSize">
             <div class="size-quantity-form">
                 <div
@@ -112,7 +112,7 @@ export default {
             sizes: null,
             all: {},
             formOutput: {
-                client: null,
+                client_id: null,
                 currentQuantity: null,
             },
             errors: {},
@@ -127,11 +127,14 @@ export default {
     },
     methods: {
         async initServices() {
-            this.clients = await this.$getEnumClientName();
+            const comboNames = ["clients"];
+            const response = await this.$getEnumsOptions(comboNames);
+            const { clients: responsClient } = response.data;
+            this.clients = responsClient;
         },
         async validateForm() {
             let initialRules = {
-                client: Yup.string().required("El cliente es obligatorio"),
+                client_id: Yup.string().required("El cliente es obligatorio"),
             };
             const schema = Yup.object().shape({
                 ...initialRules,
