@@ -5,7 +5,8 @@ namespace App\Http\Controllers\ProductSize;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Services\ProductSize\ProductSizeService;
-use App\Http\Requests\ProductSize\StoreProductSizeRequest;
+use App\Http\Requests\ProductSize\EnterProductSizeRequest;
+use App\Http\Requests\ProductSize\ExtractProductSizeRequest;
 
 class ProductSizeController extends Controller
 {
@@ -16,7 +17,12 @@ class ProductSizeController extends Controller
         $this->productSizeService = $productSizeService;
     }
 
-    public function extractProduct(StoreProductSizeRequest $request, $id)
+    public function enterProduct(EnterProductSizeRequest $request, $id)
+    {
+        return $this->productSizeService->enterProduct($request->all(), $id);
+    }
+
+    public function extractProduct(ExtractProductSizeRequest $request, $id)
     {
         return $this->productSizeService->extractProductSale($request->all(), $id);
     }

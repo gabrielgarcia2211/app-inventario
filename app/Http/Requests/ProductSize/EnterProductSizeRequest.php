@@ -4,7 +4,7 @@ namespace App\Http\Requests\ProductSize;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreProductSizeRequest extends FormRequest
+class EnterProductSizeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,14 +22,14 @@ class StoreProductSizeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id' => 'required',
+            'seamstre_id' => 'required',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'client_id.required' => 'El campo cliente es obligatorio.',
+            'seamstre_id.required' => 'El campo modista es obligatorio.',
         ];
     }
 }

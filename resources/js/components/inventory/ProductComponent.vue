@@ -39,7 +39,7 @@
                                 style="margin-right: 10px"
                                 rounded
                                 raised
-                                @click="entryProduct"
+                                @click="inputGeneralProduct"
                             />
                             <Button
                                 label="Realizar pedido"
@@ -138,7 +138,12 @@
                     style="min-width: 200px"
                 >
                     <template #body="{ data }">
-                        {{ $percentagePrice(data.price, selectedCategory.value1) }}
+                        {{
+                            $percentagePrice(
+                                data.price,
+                                selectedCategory.value1
+                            )
+                        }}
                     </template>
                 </Column>
                 <Column
@@ -252,6 +257,13 @@
         @hidden="hiddenOutputGeneralProduct"
         @reload="reloadProducts"
     />
+    <!-- entrada general del producto -->
+    <InputGeneralProductComponent
+        v-if="inputGeneralVisible"
+        :inputGeneralVisible="inputGeneralVisible"
+        @hidden="hiddenInputProduct"
+        @reload="reloadProducts"
+    />
 </template>
 
 <script>
@@ -259,6 +271,7 @@ import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
 import ManagementProductComponent from "./management/ManagementProductComponent.vue";
 import OutputProductComponent from "./management/OutputProductComponent.vue";
 import OutputGeneralProductComponent from "./management/OutputGeneralProductComponent.vue";
+import InputGeneralProductComponent from "./management/InputGeneralProductComponent.vue";
 
 export default {
     data() {
@@ -275,6 +288,7 @@ export default {
             dialogVisible: false,
             outputVisible: false,
             generalVisible: false,
+            inputGeneralVisible: false,
             selectedProduct: null,
             listCategorys: [],
             filterSelect: {
@@ -291,6 +305,7 @@ export default {
         ManagementProductComponent,
         OutputProductComponent,
         OutputGeneralProductComponent,
+        InputGeneralProductComponent,
     },
     created() {
         this.initFilters();
@@ -396,6 +411,7 @@ export default {
             this.dialogVisible =
                 this.outputVisible =
                 this.generalVisible =
+                this.inputGeneralVisible =
                     false;
         },
         addProduct() {
@@ -441,6 +457,9 @@ export default {
         hiddenOutputGeneralProduct(status) {
             this.generalVisible = status;
         },
+        hiddenInputProduct(status) {
+            this.inputGeneralVisible = status;
+        },
         changeSelectCategory(event) {
             this.visibleAjustedPrice = event.value != null ? true : false;
             this.fetchProducts();
@@ -454,6 +473,9 @@ export default {
         },
         outputGeneralProduct() {
             this.generalVisible = true;
+        },
+        inputGeneralProduct() {
+            this.inputGeneralVisible = true;
         },
     },
 };

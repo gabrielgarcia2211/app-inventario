@@ -3,6 +3,7 @@
 namespace App\Services\ProductSize;
 
 use App\Models\Configuration\EnumOption;
+use App\Models\ProductInput\ProductInput;
 use Illuminate\Support\Facades\DB;
 use App\Models\ProductSize\ProductSize;
 use Illuminate\Support\Facades\Validator;
@@ -11,6 +12,23 @@ use App\Models\ProductOutflowDetail\ProductOutflowDetail;
 
 class ProductSizeService
 {
+    public function enterProduct(array $data, $id)
+    {
+        return DB::transaction(function () use ($data, $id) {
+            $list = $data['currentQuantity'];
+            // guardamos el detalle de cada producto
+            ProductInput::create([
+                'product_id' => $id,
+                'seamstre_id' => $data['seamstre_id'],
+            ]);
+            foreach ($list as $value) {
+                $size = ProductSize::find($value['id']);
+                $size->quantity += $value['quantity'];
+                $size->save();
+            }
+        });
+    }
+
     public function extractProductSale(array $data, $id)
     {
         return DB::transaction(function () use ($data, $id) {

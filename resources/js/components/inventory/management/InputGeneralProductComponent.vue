@@ -7,7 +7,7 @@
         :draggable="false"
     >
         <template #header>
-            <h3>Marcar Salida</h3>
+            <h3>Marcar Entrada</h3>
         </template>
 
         <div class="dialog-content">
@@ -15,24 +15,24 @@
 
             <div class="select-client">
                 <Select
-                    :options="clients"
-                    v-model="formOutput.client_id"
-                    :class="{ 'p-invalid': errors.client_id }"
-                    placeholder="Selecciona un cliente"
+                    :options="seamstres"
+                    v-model="formInput.seamstre_id"
+                    :class="{ 'p-invalid': errors.seamstre_id }"
+                    placeholder="Selecciona un modista"
                     optionLabel="name"
                     optionValue="id"
                     style="width: 100%; margin-top: 12px"
                     showClear
                     filter
                 />
-                <small v-if="errors.client_id" class="p-error">{{
-                    errors.client_id
+                <small v-if="errors.seamstre_id" class="p-error">{{
+                    errors.seamstre_id
                 }}</small>
             </div>
             <div class="data-table-container">
                 <DataTable
                     v-model:filters="filters"
-                    v-model:selection="formOutput.product"
+                    v-model:selection="formInput.product"
                     :loading="loading"
                     :value="products"
                     :paginator="true"
@@ -94,7 +94,6 @@
                                 buttonLayout="horizontal"
                                 :step="1"
                                 :min="0"
-                                :max="item.initial_quantity"
                                 fluid
                             >
                                 <template #incrementbuttonicon>
@@ -117,7 +116,6 @@
                             buttonLayout="horizontal"
                             :step="1"
                             :min="0"
-                            :max="all.initial_quantity"
                             placeholder="Cantidad"
                             fluid
                         >
@@ -138,7 +136,7 @@
                     label="Marcar"
                     severity="success"
                     style="margin-right: 10px"
-                    @click="extractGeneralProduct"
+                    @click="inputGeneralProduct"
                 />
                 <Button
                     label="Cancelar"
@@ -155,19 +153,20 @@ import * as Yup from "yup";
 import { FilterMatchMode, FilterOperator } from "@primevue/core/api";
 
 export default {
-    props: ["generalVisible"],
+    props: ["inputGeneralVisible"],
     data() {
         return {
-            headerSale: "Venta general",
+            headerSale: "Entrada general",
             isAllSize: false,
-            visible: this.generalVisible,
-            clients: [],
+            visible: this.inputGeneralVisible,
+            seamstres: [],
             sizes: null,
             all: {},
-            formOutput: {
-                client_id: null,
+            formInput: {
+                seamstre_id: null,
                 product: null,
                 currentQuantity: null,
+                type: "input",
             },
             errors: {},
             // variables de datatable
@@ -186,7 +185,7 @@ export default {
         FilterOperator,
     },
     watch: {
-        "formOutput.product"(value) {
+        "formInput.product"(value) {
             if (!value) return;
             this.productId = value.id;
             this.getProduct(value.id);
@@ -201,14 +200,14 @@ export default {
     },
     methods: {
         async initServices() {
-            const comboNames = ["clients"];
+            const comboNames = ["seamstres"];
             const response = await this.$getEnumsOptions(comboNames);
-            const { clients: responsClient } = response.data;
-            this.clients = responsClient;
+            const { seamstres: responsSeamstres } = response.data;
+            this.seamstres = responsSeamstres;
         },
         async validateForm() {
             let initialRules = {
-                client_id: Yup.string().required("El cliente es obligatorio"),
+                seamstre_id: Yup.string().required("El modista es obligatorio"),
                 product: Yup.object()
                     .shape({
                         id: Yup.string().required("El producto es obligatorio"),
@@ -220,7 +219,7 @@ export default {
             });
             this.errors = {};
             try {
-                await schema.validate(this.formOutput, {
+                await schema.validate(this.formInput, {
                     abortEarly: false,
                 });
                 return true;
@@ -238,42 +237,29 @@ export default {
                     const { data } = response.data;
                     this.isAllSize = data?.is_total;
                     if (this.isAllSize == "SIZE") {
-                        this.sizes = data.product_sizes;
+                        this.sizes = data.product_sizes.map((size) => {
+                            size.quantity = 0;
+                            return size;
+                        });
                     } else {
                         this.all.id = data.product_sizes[0].id;
                         this.all.size = data.product_sizes[0].size;
-                        this.all.quantity = data.product_sizes[0].quantity;
-                        this.all.initial_quantity =
-                            data.product_sizes[0].initial_quantity;
+                        this.all.quantity = 0;
                     }
                 })
                 .catch((error) => {
                     this.$readStatusHttp(error);
                 });
         },
-        async extractGeneralProduct() {
-            this.formOutput.currentQuantity =
+        async inputGeneralProduct() {
+            this.formInput.currentQuantity =
                 this.isAllSize == "SIZE" ? this.sizes : [this.all];
-            const isValidQuantity = this.formOutput.currentQuantity.some(
-                (value) => {
-                    return value.initial_quantity > 0;
-                }
-            );
-            if (
-                !isValidQuantity ||
-                this.formOutput.currentQuantity.length == 0
-            ) {
-                this.$alertWarning(
-                    "No hay stock de ninguna talla para el producto."
-                );
-                return;
-            }
             const isValid = await this.validateForm();
             if (isValid) {
                 this.$axios
                     .post(
-                        "/product-size/extract/" + this.productId,
-                        this.formOutput
+                        "/product-size/enter/" + this.productId,
+                        this.formInput
                     )
                     .then((response) => {
                         this.$alertSuccess("Salida procesada");
