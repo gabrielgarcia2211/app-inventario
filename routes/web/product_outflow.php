@@ -7,6 +7,6 @@ Route::get('/outflows', function () {
     return view('outflow.dashboard');
 })->middleware('auth');
 
-Route::prefix('outflows')->middleware('auth')->group(function () {
+Route::prefix('product-outflows')->middleware('auth')->group(function () {
     Route::get('/list', [ProductOutflowController::class, 'index'])->name('outflows.index');
 });

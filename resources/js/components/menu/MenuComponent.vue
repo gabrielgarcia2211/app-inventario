@@ -69,7 +69,7 @@
                 </a>
             </li>
             <li>
-                <a href="/outflows" class="p-menuitem-link menu-button">
+                <a href="/inputs" class="p-menuitem-link menu-button">
                     <i class="pi pi-address-book p-menuitem-icon"></i>
                     <span class="p-menuitem-text">Entrada de Productos</span>
                 </a>
@@ -78,6 +78,12 @@
                 <a href="/outflows" class="p-menuitem-link menu-button">
                     <i class="pi pi-sign-in p-menuitem-icon"></i>
                     <span class="p-menuitem-text">Salida de Productos</span>
+                </a>
+            </li>
+            <li>
+                <a href="/enums" class="p-menuitem-link menu-button">
+                    <i class="pi pi-cog p-menuitem-icon"></i>
+                    <span class="p-menuitem-text">Opciones</span>
                 </a>
             </li>
         </ul>

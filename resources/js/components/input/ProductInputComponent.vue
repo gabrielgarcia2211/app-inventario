@@ -1,12 +1,12 @@
 <template>
     <Card class="container-product">
-        <template #title>Pedidos</template>
+        <template #title>Entradas</template>
         <template #content>
             <DataTable
                 v-model:filters="filters"
                 :loading="loading"
-                rowGroupMode="rowspan" 
-                groupRowsBy="client"
+                rowGroupMode="rowspan"
+                groupRowsBy="seamstress"
                 :value="products"
                 :paginator="true"
                 :rows="perPage"
@@ -24,20 +24,20 @@
                 showGridlines
             >
                 <Column
-                    field="client"
-                    header="Nombre cliente"
+                    field="seamstress"
+                    header="Nombre modista"
                     :showClearButton="false"
                     style="min-width: 200px"
                 >
                     <template #body="{ data }">
-                        {{ data.client }}
+                        {{ data.seamstress }}
                     </template>
                     <template #filter="{ filterModel }">
                         <InputText
                             v-model="filterModel.value"
                             type="text"
                             class="p-column-filter"
-                            placeholder="Buscar por cliente"
+                            placeholder="Buscar por modista"
                         />
                     </template>
                 </Column>
@@ -89,14 +89,14 @@
                     </template>
                 </Column>
                 <Column
-                    field="date_out"
+                    field="date_entry"
                     header="Fecha de salida"
                     sortable
                     :showClearButton="false"
                     style="min-width: 200px"
                 >
                     <template #body="{ data }">
-                        {{ data.date_out }}
+                        {{ data.date_entry }}
                     </template>
                 </Column>
             </DataTable>
@@ -129,12 +129,12 @@ export default {
         this.initFilters();
     },
     mounted() {
-        this.fetchProductOutflow();
+        this.fetchProductInput();
     },
     methods: {
         initFilters() {
             this.filters = {
-                name: {
+                seamstress: {
                     clear: false,
                     constraints: [
                         { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -151,13 +151,13 @@ export default {
         onPage(event) {
             this.page = event.page + 1;
             this.perPage = event.rows;
-            this.fetchProductOutflow();
+            this.fetchProductInput();
         },
         onSort(event) {
             this.page = 1;
             this.sortField = event.sortField;
             this.sortOrder = event.sortOrder;
-            this.fetchProductOutflow();
+            this.fetchProductInput();
         },
         onFilters(event) {
             this.page = 1;
@@ -167,7 +167,7 @@ export default {
                     for (const constraint of filter.constraints) {
                         if (constraint.value) {
                             this.filtroInfo.push([
-                                this.$relationTableProductOutflow(key),
+                                this.$relationTableProductInput(key),
                                 constraint.matchMode,
                                 constraint.value,
                             ]);
@@ -175,12 +175,12 @@ export default {
                     }
                 }
             }
-            this.fetchProductOutflow();
+            this.fetchProductInput();
         },
-        fetchProductOutflow() {
+        fetchProductInput() {
             this.loading = true;
             this.$axios
-                .get("/product-outflows/list", {
+                .get("/product-inputs/list", {
                     params: {
                         page: this.page,
                         perPage: this.perPage,

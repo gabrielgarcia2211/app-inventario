@@ -27,12 +27,12 @@ class ProductInputController extends Controller
                 $request,
                 [],
                 [
-                    'enum_options.name as client',
+                    'enum_options.name as seamstress',
                     'products.name as name',
                     'products.id as product_id',
-                    DB::raw("DATE_FORMAT(product_outflows.created_at, '%d-%m-%Y %H:%i:%s') as fecha_salida"),
-                    DB::raw('GROUP_CONCAT(CONCAT(product_outflow_details.size, ":", product_outflow_details.quantity) ORDER BY product_outflow_details.size ASC SEPARATOR ";") as outflows'),
-                    DB::raw('SUM(product_outflow_details.quantity) as total_quantity')
+                    DB::raw("DATE_FORMAT(product_inputs.created_at, '%d-%m-%Y %H:%i:%s') as date_entry"),
+                    DB::raw('GROUP_CONCAT(CONCAT(product_input_details.size, ":", product_input_details.quantity) ORDER BY product_input_details.size ASC SEPARATOR ";") as outflows'),
+                    DB::raw('SUM(product_input_details.quantity) as total_quantity')
                 ]
             );
         } catch (\Exception $ex) {

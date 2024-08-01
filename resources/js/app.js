@@ -67,8 +67,14 @@ app.component("product-component", ProductComponent);
 import ProductOutflowComponent from "./components/outflows/ProductOutflowComponent.vue";
 app.component("product-outflow-component", ProductOutflowComponent);
 
+import ProductInputComponent from "./components/input/ProductInputComponent.vue";
+app.component("product-input-component", ProductInputComponent);
+
 import MenuComponent from "./components/menu/MenuComponent.vue";
 app.component("menu-component", MenuComponent);
+
+import EnumOptionComponent from "./components/admin/EnumOptionComponent.vue";
+app.component("product-admin-component", EnumOptionComponent);
 
 // Configura Axios globalmente
 app.config.globalProperties.$axios = axios;

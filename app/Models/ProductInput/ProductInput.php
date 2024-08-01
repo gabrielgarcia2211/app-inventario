@@ -12,7 +12,7 @@ class ProductInput extends Model
 
     protected $fillable = [
         'product_id',
-        'seamstre_id',
+        'seamstress_id',
     ];
 
     public function product()

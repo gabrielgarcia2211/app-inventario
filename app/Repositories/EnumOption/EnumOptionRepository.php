@@ -25,4 +25,11 @@ class EnumOptionRepository implements EnumOptionRepositoryInterface
         $product->update($attributes);
         return $product;
     }
+
+    public function delete($id)
+    {
+        $product = $this->model->findOrFail($id);
+        $product->delete();
+        return $product;
+    }
 }

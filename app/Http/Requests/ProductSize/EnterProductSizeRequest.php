@@ -22,14 +22,14 @@ class EnterProductSizeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'seamstre_id' => 'required',
+            'seamstress_id' => 'required',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'seamstre_id.required' => 'El campo modista es obligatorio.',
+            'seamstress_id.required' => 'El campo modista es obligatorio.',
         ];
     }
 }

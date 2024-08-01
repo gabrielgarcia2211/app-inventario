@@ -30,7 +30,7 @@ class ProductOutflowController extends Controller
                     'enum_options.name as client',
                     'products.name as name',
                     'products.id as product_id',
-                    DB::raw("DATE_FORMAT(product_outflows.created_at, '%d-%m-%Y %H:%i:%s') as fecha_salida"),
+                    DB::raw("DATE_FORMAT(product_outflows.created_at, '%d-%m-%Y %H:%i:%s') as date_out"),
                     DB::raw('GROUP_CONCAT(CONCAT(product_outflow_details.size, ":", product_outflow_details.quantity) ORDER BY product_outflow_details.size ASC SEPARATOR ";") as outflows'),
                     DB::raw('SUM(product_outflow_details.quantity) as total_quantity')
                 ]

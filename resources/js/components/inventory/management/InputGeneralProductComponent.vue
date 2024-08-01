@@ -16,8 +16,8 @@
             <div class="select-client">
                 <Select
                     :options="seamstres"
-                    v-model="formInput.seamstre_id"
-                    :class="{ 'p-invalid': errors.seamstre_id }"
+                    v-model="formInput.seamstress_id"
+                    :class="{ 'p-invalid': errors.seamstress_id }"
                     placeholder="Selecciona un modista"
                     optionLabel="name"
                     optionValue="id"
@@ -25,8 +25,8 @@
                     showClear
                     filter
                 />
-                <small v-if="errors.seamstre_id" class="p-error">{{
-                    errors.seamstre_id
+                <small v-if="errors.seamstress_id" class="p-error">{{
+                    errors.seamstress_id
                 }}</small>
             </div>
             <div class="data-table-container">
@@ -163,7 +163,7 @@ export default {
             sizes: null,
             all: {},
             formInput: {
-                seamstre_id: null,
+                seamstress_id: null,
                 product: null,
                 currentQuantity: null,
                 type: "input",
@@ -207,7 +207,7 @@ export default {
         },
         async validateForm() {
             let initialRules = {
-                seamstre_id: Yup.string().required("El modista es obligatorio"),
+                seamstress_id: Yup.string().required("El modista es obligatorio"),
                 product: Yup.object()
                     .shape({
                         id: Yup.string().required("El producto es obligatorio"),

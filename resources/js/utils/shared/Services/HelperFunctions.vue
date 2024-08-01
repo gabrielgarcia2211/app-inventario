@@ -67,7 +67,7 @@ export default {
             const vm = this;
             return new Promise((resolve, reject) => {
                 this.$axios
-                    .get(`/enum/option/${type.join(",")}`)
+                    .get(`/enums/option/${type.join(",")}`)
                     .then(function (response) {
                         resolve(response.data);
                     })

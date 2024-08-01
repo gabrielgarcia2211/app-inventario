@@ -13,6 +13,7 @@ class EnumOption extends Model
         'parent_id',
         'name',
         'description',
+        'value1',
         'is_father',
         'status'
     ];

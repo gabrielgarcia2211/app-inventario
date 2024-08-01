@@ -18,7 +18,8 @@ class ProductInputService
     {
         return ProductInput::query()
             ->leftJoin('products', 'products.id', '=', 'product_inputs.product_id')
-            ->leftJoin('enum_options', 'enum_options.id', '=', 'product_inputs.client_id')
+            ->leftJoin('product_input_details', 'product_input_details.product_input_id', '=', 'product_inputs.id')
+            ->leftJoin('enum_options', 'enum_options.id', '=', 'product_inputs.seamstress_id')
             ->groupBy(
                 'product_inputs.id',
                 'enum_options.id',

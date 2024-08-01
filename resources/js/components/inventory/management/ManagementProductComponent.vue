@@ -7,7 +7,7 @@
         :draggable="false"
     >
         <template #header>
-            <h3>Guardar Producto</h3>
+            <h3>Gestionar Producto</h3>
         </template>
         <div class="product-form">
             <div class="product-form-column">
@@ -357,34 +357,4 @@ export default {
 };
 </script>
 
-<style>
-.dialog-management-product .p-dialog-close-button {
-    display: none !important;
-}
-
-.product-form {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-top: 25px;
-}
-
-.product-form-column {
-    flex: 1;
-    min-width: 200px;
-}
-
-.inputtext-product {
-    width: 100%;
-}
-
-#attachPhoto [data-pc-name="pcuploadbutton"] {
-    display: none;
-}
-
-.p-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-</style>
+<style></style>
