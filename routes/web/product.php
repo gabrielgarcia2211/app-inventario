@@ -13,6 +13,6 @@ Route::prefix('products')->middleware('auth')->group(function () {
     Route::get('/{id}', [ProductController::class, 'show'])->name('products.show');
     Route::post('/update/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::delete('/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
-    Route::get('/list/size', [ProductController::class, 'getEnumProductSize'])->name('products.size');
+    Route::get('/list/size/{type}', [ProductController::class, 'getEnumProductSize'])->name('products.size');
     Route::get('/list/section', [ProductController::class, 'getEnumProductSection'])->name('products.section');
 });

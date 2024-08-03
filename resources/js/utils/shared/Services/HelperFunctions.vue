@@ -1,11 +1,11 @@
 <script>
 export default {
     methods: {
-        $getEnumProductSize() {
+        $getEnumProductSize(type) {
             const vm = this;
             return new Promise((resolve, reject) => {
                 this.$axios
-                    .get(`/products/list/size`)
+                    .get(`/products/list/size/${type}`)
                     .then(function (response) {
                         resolve(response.data);
                     })

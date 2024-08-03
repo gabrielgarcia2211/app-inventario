@@ -89,40 +89,45 @@
                 />
             </div>
         </div>
-        <div v-if="isAllSize">
-            <hr />
-            <h5>Cantidad por Talla</h5>
-            <div class="size-quantity-form">
-                <div
-                    v-for="(item, index) in sizes"
-                    :key="index"
-                    class="size-quantity-row"
-                >
-                    <InputText
-                        v-model="item.size"
-                        class="inputtext-product"
-                        placeholder="Talla"
-                        disabled
-                    />
+        <div v-if="product.section">
+            <div v-if="isAllSize">
+                <hr />
+                <h5>Cantidad por Talla</h5>
+                <div class="size-quantity-form">
+                    <div
+                        v-for="(item, index) in sizes"
+                        :key="index"
+                        class="size-quantity-row"
+                    >
+                        <InputText
+                            v-model="item.size"
+                            class="inputtext-product"
+                            placeholder="Talla"
+                            disabled
+                        />
+                        <InputNumber
+                            v-model="item.quantity"
+                            class="inputtext-product"
+                            mode="decimal"
+                            placeholder="Cantidad"
+                        />
+                    </div>
+                </div>
+            </div>
+            <div v-else>
+                <hr />
+                <h5>Cantidad Total</h5>
+                <div class="size-quantity-form">
                     <InputNumber
-                        v-model="item.quantity"
+                        v-model="product.quantity"
                         class="inputtext-product"
-                        mode="decimal"
                         placeholder="Cantidad"
                     />
                 </div>
             </div>
         </div>
-        <div v-else>
-            <hr />
-            <h5>Cantidad Total</h5>
-            <div class="size-quantity-form">
-                <InputNumber
-                    v-model="product.quantity"
-                    class="inputtext-product"
-                    placeholder="Cantidad"
-                />
-            </div>
+        <div v-else style="margin-top: 20px">
+            <p style="color: orange">Debes marcar una seccion</p>
         </div>
         <div class="product-form">
             <div v-if="!flagPhoto" class="product-form-column">
@@ -230,7 +235,12 @@ export default {
         isAllSize(newValue) {
             this.product.is_total = !newValue ? "ALL" : "SIZE";
             if (newValue) {
-                this.getProductSize();
+                this.getProductSize(this.product.section);
+            }
+        },
+        "product.section"(newValue, oldValue) {
+            if (oldValue) {
+                this.getProductSize(this.product.section);
             }
         },
     },
@@ -283,8 +293,8 @@ export default {
                 return false;
             }
         },
-        async getProductSize() {
-            this.sizes = await this.$getEnumProductSize();
+        async getProductSize(type) {
+            this.sizes = await this.$getEnumProductSize(type);
         },
         async saveProduct() {
             const isValid = await this.validateForm();

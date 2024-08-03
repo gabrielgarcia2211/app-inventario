@@ -89,9 +89,9 @@ class ProductController extends Controller
         }
     }
 
-    public function getEnumProductSize()
+    public function getEnumProductSize($type)
     {
-        $sizes = sizeProductEnum::getValues();
+        $sizes = sizeProductEnum::getSizesFor($type);
         $sizesWithQuantity = array_map(fn ($size) => ['size' => $size, 'quantity' => 0], $sizes);
         return response()->json($sizesWithQuantity);
     }
